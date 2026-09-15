@@ -1,8 +1,51 @@
 {% extends "base.html" %}
 {% block title %}Envíos · {{ site_name }}{% endblock %}
 {% block main %}
-<h1>Envíos{% if filter_problem %} · {{ filter_problem }}{% endif %}</h1>
-<table class="list">
+<div class="page-head">
+  <div>
+    <h1>Envíos</h1>
+    <p class="meta" id="sub-count" aria-live="polite">{{ rows|length }} envíos</p>
+  </div>
+</div>
+
+<form class="toolbar" id="sub-filters" role="search" data-list="submissions">
+  <div class="field grow">
+    <label for="sub-q">Buscar</label>
+    <input id="sub-q" name="q" type="search" value="{{ q }}" placeholder="ID, problema o veredicto…" autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="sub-problem">Problema</label>
+    <select id="sub-problem" name="problem">
+      <option value="">Todos</option>
+      {% for code in problem_codes %}
+      <option value="{{ code }}" {% if code == filter_problem %}selected{% endif %}>{{ code }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="sub-verdict">Resultado</label>
+    <select id="sub-verdict" name="verdict">
+      <option value="all" {% if verdict == 'all' %}selected{% endif %}>Todos</option>
+      {% for v in ['AC', 'WA', 'TLE', 'MLE', 'RE', 'CE'] %}
+      <option value="{{ v }}" {% if verdict == v %}selected{% endif %}>{{ v }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="sub-lang">Lenguaje</label>
+    <select id="sub-lang" name="lang">
+      <option value="all" {% if lang_filter == 'all' %}selected{% endif %}>Todos</option>
+      {% for val, label in langs %}
+      <option value="{{ val }}" {% if lang_filter == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="btn ghost" type="reset" id="sub-reset">Limpiar</button>
+</form>
+
+<div class="table-wrap">
+<table class="list" id="sub-table">
+  <caption class="sr-only">Historial de envíos. Filtra con los controles de arriba.</caption>
   <thead>
     <tr>
       <th>ID</th>
@@ -16,7 +59,12 @@
   </thead>
   <tbody>
     {% for r in rows %}
-    <tr>
+    <tr
+      data-id="{{ r.id }}"
+      data-problem="{{ r.problem }}"
+      data-lang="{{ r.lang }}"
+      data-verdict="{{ r.verdict }}"
+    >
       <td><a href="{{ url_for('submission', sid=r.id) }}">{{ r.id }}</a></td>
       <td><a href="{{ url_for('problem', code=r.problem) }}">{{ r.problem }}</a></td>
       <td>{{ r.lang }}</td>
@@ -25,9 +73,9 @@
       <td>{{ "%.3f"|format(r.time or 0) }}s</td>
       <td class="muted">{{ r.when }}</td>
     </tr>
-    {% else %}
-    <tr><td colspan="7">Sin envíos.</td></tr>
     {% endfor %}
   </tbody>
 </table>
+</div>
+<p class="empty-state" id="sub-empty" {% if rows %}hidden{% endif %}>Sin envíos{% if filter_problem %} para {{ filter_problem }}{% endif %}.</p>
 {% endblock %}

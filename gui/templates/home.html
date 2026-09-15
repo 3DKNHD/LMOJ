@@ -5,6 +5,17 @@
   <div>
     <h1>{{ site_name }}</h1>
     <p>Juez local al estilo DMOJ. Los casos ocultos los fabrica el <code>gen.py</code> de cada problema, no un banco de <code>.in</code> para copiar.</p>
+    <form class="hero-search" action="{{ url_for('problems') }}" method="get" role="search">
+      <label class="sr-only" for="home-q">Buscar problemas</label>
+      <input id="home-q" name="q" type="search" placeholder="Buscar problemas por código, nombre o tema…" autocomplete="off">
+      <button class="btn primary" type="submit">Buscar</button>
+    </form>
+    {% if problem_count %}
+    <div class="progress" role="img" aria-label="{{ ac_count }} de {{ problem_count }} problemas resueltos, {{ points_got }} de {{ points_total }} puntos">
+      <div class="progress-bar" style="width: {{ (100 * ac_count / problem_count) | round(1) }}%"></div>
+    </div>
+    <p class="meta">{{ ac_count }}/{{ problem_count }} resueltos · {{ points_got }}/{{ points_total }} pts</p>
+    {% endif %}
   </div>
   <div class="hero-actions">
     <a class="btn primary" href="{{ url_for('problems') }}">Lista de problemas</a>
@@ -14,24 +25,39 @@
 
 <section class="grid-2">
   <article class="card">
-    <h2>Problemas</h2>
-    <table class="plain">
+    <div class="card-head">
+      <h2>Problemas</h2>
+      <label class="sr-only" for="home-filter">Filtrar esta lista</label>
+      <input id="home-filter" type="search" placeholder="Filtrar lista…" autocomplete="off">
+    </div>
+    <div class="table-wrap">
+    <table class="plain" id="home-problem-table">
       <thead>
-        <tr><th>Código</th><th>Nombre</th><th>Pts</th><th></th></tr>
+        <tr><th>Código</th><th>Nombre</th><th>Pts</th><th>Estado</th></tr>
       </thead>
       <tbody>
         {% for p in problems %}
-        <tr>
+        <tr data-code="{{ p.code }}" data-name="{{ p.name }}" data-tags="{{ (p.tags or []) | join(' ') }}" class="row-{{ p.status }}">
           <td><a href="{{ url_for('problem', code=p.code) }}">{{ p.code }}</a></td>
           <td>{{ p.name }}</td>
           <td>{{ p.points }}</td>
-          <td class="verdict-{{ best.get(p.code, {}).get('verdict', '-') }}">{{ best.get(p.code, {}).get('verdict', '—') }}</td>
+          <td>
+            {% if p.status == 'ac' %}
+            <span class="verdict-AC">AC</span>
+            {% elif p.status == 'tried' %}
+            <span class="muted">Intentado</span>
+            {% else %}
+            <span class="muted">—</span>
+            {% endif %}
+          </td>
         </tr>
         {% else %}
         <tr><td colspan="4">No hay problemas. Usa Sync o deja el pack local en <code>problems/</code>.</td></tr>
         {% endfor %}
       </tbody>
     </table>
+    </div>
+    <p class="empty-state" id="home-empty" hidden>Nada coincide con ese filtro.</p>
   </article>
   <article class="card">
     <h2>Envíos recientes</h2>
@@ -43,7 +69,7 @@
         {% for r in recent %}
         <tr>
           <td><a href="{{ url_for('submission', sid=r.id) }}">{{ r.id }}</a></td>
-          <td>{{ r.problem }}</td>
+          <td><a href="{{ url_for('problem', code=r.problem) }}">{{ r.problem }}</a></td>
           <td class="verdict-{{ r.verdict }}">{{ r.verdict }}</td>
           <td class="muted">{{ r.when }}</td>
         </tr>

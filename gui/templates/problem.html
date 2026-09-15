@@ -9,9 +9,15 @@
       {{ meta.points }} pts
       · TL {{ meta.timeLimit }}s
       · ML {{ meta.memoryLimit }} MB
-      · {{ (meta.tags or []) | join(" · ") }}
       {% if best.verdict == "AC" %}<span class="badge ac">AC</span>{% endif %}
     </p>
+    {% if meta.tags %}
+    <p class="tags">
+      {% for t in meta.tags %}
+      <a class="tag" href="{{ url_for('problems', tag=t) }}">{{ t }}</a>
+      {% endfor %}
+    </p>
+    {% endif %}
   </div>
   <a class="btn ghost" href="{{ url_for('submissions', problem=meta.code) }}">Envíos de este problema</a>
 </header>

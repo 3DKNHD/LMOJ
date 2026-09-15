@@ -60,15 +60,47 @@ def _samples_html(prob: Path) -> list[dict]:
     return rows
 
 
+def _with_status(problems: list[dict], best: dict, attempted: set[str]) -> list[dict]:
+    rows = []
+    for p in problems:
+        item = dict(p)
+        code = item.get("code") or item.get("slug")
+        if best.get(code, {}).get("verdict") == "AC":
+            item["status"] = "ac"
+            item["verdict"] = "AC"
+        elif code in attempted:
+            item["status"] = "tried"
+            item["verdict"] = "…"
+        else:
+            item["status"] = "none"
+            item["verdict"] = ""
+        pts = float(item.get("points") or 0)
+        if pts <= 2:
+            item["level"] = "easy"
+        elif pts <= 5:
+            item["level"] = "medium"
+        else:
+            item["level"] = "hard"
+        rows.append(item)
+    return rows
+
+
+def _all_tags(problems: list[dict]) -> list[str]:
+    tags = {t for p in problems for t in (p.get("tags") or []) if t}
+    return sorted(tags, key=lambda s: s.casefold())
+
+
 @app.route("/")
 def home():
     problems = P.list_problems()
     best = store.best_map()
+    attempted = store.attempted_codes()
     recent = store.submissions(limit=8)
     info = Y.last_sync_info()
+    rows = _with_status(problems, best, attempted)
     return render_template(
         "home.html",
-        problems=problems,
+        problems=rows,
         best=best,
         recent=recent,
         sync=info,
@@ -79,7 +111,20 @@ def home():
 def problems():
     rows = P.list_problems()
     best = store.best_map()
-    return render_template("problems.html", problems=rows, best=best)
+    attempted = store.attempted_codes()
+    rows = _with_status(rows, best, attempted)
+    return render_template(
+        "problems.html",
+        problems=rows,
+        best=best,
+        tags=_all_tags(rows),
+        q=request.args.get("q", ""),
+        tag=request.args.get("tag", ""),
+        status=request.args.get("status", "all"),
+        level=request.args.get("level", "all"),
+        sort=request.args.get("sort", "points"),
+        direction=request.args.get("dir", "asc"),
+    )
 
 
 @app.route("/problem/<code>", methods=["GET", "POST"])
@@ -118,9 +163,17 @@ def problem(code: str):
 
 @app.route("/submissions")
 def submissions():
-    code = request.args.get("problem") or None
-    rows = store.submissions(limit=80, problem=code)
-    return render_template("submissions.html", rows=rows, filter_problem=code)
+    rows = store.submissions(limit=200)
+    problem_codes = sorted({r.get("problem") for r in rows if r.get("problem")})
+    return render_template(
+        "submissions.html",
+        rows=rows,
+        filter_problem=request.args.get("problem") or "",
+        problem_codes=problem_codes,
+        q=request.args.get("q", ""),
+        verdict=request.args.get("verdict", "all"),
+        lang_filter=request.args.get("lang", "all"),
+    )
 
 
 @app.route("/submission/<int:sid>")

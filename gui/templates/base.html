@@ -7,17 +7,23 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
   <header class="nav">
     <a class="logo" href="{{ url_for('home') }}">{{ site_name }}</a>
-    <nav>
-      <a href="{{ url_for('problems') }}">Problemas</a>
-      <a href="{{ url_for('submissions') }}">Envíos</a>
-      <a href="{{ url_for('sync_page') }}">Sync</a>
+    <nav aria-label="Principal">
+      <a href="{{ url_for('problems') }}" {% if request.endpoint == 'problems' %}aria-current="page"{% endif %}>Problemas</a>
+      <a href="{{ url_for('submissions') }}" {% if request.endpoint in ('submissions', 'submission') %}aria-current="page"{% endif %}>Envíos</a>
+      <a href="{{ url_for('sync_page') }}" {% if request.endpoint == 'sync_page' %}aria-current="page"{% endif %}>Sync</a>
     </nav>
-    <div class="score">{{ points_got }} / {{ points_total }} pts · {{ ac_count }}/{{ problem_count }} AC</div>
+    <div class="score" title="Puntos y problemas resueltos">
+      <span>{{ points_got }} / {{ points_total }} pts</span>
+      <span class="score-sep" aria-hidden="true">·</span>
+      <span>{{ ac_count }}/{{ problem_count }} AC</span>
+    </div>
   </header>
-  <main class="page">
+  <main class="page" id="contenido">
     {% block main %}{% endblock %}
   </main>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>

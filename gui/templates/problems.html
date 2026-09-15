@@ -1,31 +1,118 @@
 {% extends "base.html" %}
 {% block title %}Problemas · {{ site_name }}{% endblock %}
 {% block main %}
-<h1>Problemas</h1>
-<table class="list">
+<div class="page-head">
+  <div>
+    <h1>Problemas</h1>
+    <p class="meta" id="problem-count" aria-live="polite">{{ problems|length }} problemas</p>
+  </div>
+</div>
+
+<form class="toolbar" id="problem-filters" role="search" data-list="problems">
+  <div class="field grow">
+    <label for="q">Buscar</label>
+    <input id="q" name="q" type="search" value="{{ q }}" placeholder="Código, nombre o tema…" autocomplete="off" autofocus>
+  </div>
+  <div class="field">
+    <label for="tag">Tema</label>
+    <select id="tag" name="tag">
+      <option value="">Todos los temas</option>
+      {% for t in tags %}
+      <option value="{{ t }}" {% if t == tag %}selected{% endif %}>{{ t }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="level">Dificultad</label>
+    <select id="level" name="level">
+      <option value="all" {% if level == 'all' %}selected{% endif %}>Todas</option>
+      <option value="easy" {% if level == 'easy' %}selected{% endif %}>Fácil (1–2 pts)</option>
+      <option value="medium" {% if level == 'medium' %}selected{% endif %}>Media (3–5 pts)</option>
+      <option value="hard" {% if level == 'hard' %}selected{% endif %}>Difícil (6+ pts)</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="status">Estado</label>
+    <select id="status" name="status">
+      <option value="all" {% if status == 'all' %}selected{% endif %}>Todos</option>
+      <option value="none" {% if status == 'none' %}selected{% endif %}>Sin intentar</option>
+      <option value="tried" {% if status == 'tried' %}selected{% endif %}>Intentados</option>
+      <option value="ac" {% if status == 'ac' %}selected{% endif %}>Resueltos</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="sort">Orden</label>
+    <select id="sort" name="sort">
+      <option value="points" {% if sort == 'points' %}selected{% endif %}>Puntos</option>
+      <option value="code" {% if sort == 'code' %}selected{% endif %}>Código</option>
+      <option value="name" {% if sort == 'name' %}selected{% endif %}>Nombre</option>
+      <option value="tl" {% if sort == 'tl' %}selected{% endif %}>Tiempo límite</option>
+      <option value="status" {% if sort == 'status' %}selected{% endif %}>Estado</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="dir">Dirección</label>
+    <select id="dir" name="dir">
+      <option value="asc" {% if direction == 'asc' %}selected{% endif %}>Ascendente</option>
+      <option value="desc" {% if direction == 'desc' %}selected{% endif %}>Descendente</option>
+    </select>
+  </div>
+  <button class="btn ghost" type="reset" id="problem-reset">Limpiar</button>
+</form>
+
+<div class="table-wrap">
+<table class="list" id="problem-table">
+  <caption class="sr-only">Lista de problemas. Usa los filtros de arriba o pulsa / para buscar.</caption>
   <thead>
     <tr>
-      <th>Código</th>
-      <th>Nombre</th>
+      <th><button type="button" class="th-sort" data-sort="code" aria-label="Ordenar por código">Código</button></th>
+      <th><button type="button" class="th-sort" data-sort="name" aria-label="Ordenar por nombre">Nombre</button></th>
       <th>Temas</th>
-      <th>Pts</th>
-      <th>TL</th>
-      <th>Best</th>
+      <th><button type="button" class="th-sort" data-sort="points" aria-label="Ordenar por puntos">Pts</button></th>
+      <th><button type="button" class="th-sort" data-sort="tl" aria-label="Ordenar por tiempo límite">TL</button></th>
+      <th><button type="button" class="th-sort" data-sort="status" aria-label="Ordenar por estado">Best</button></th>
     </tr>
   </thead>
   <tbody>
     {% for p in problems %}
-    <tr>
+    <tr
+      data-code="{{ p.code }}"
+      data-name="{{ p.name }}"
+      data-tags="{{ (p.tags or []) | join('|') }}"
+      data-points="{{ p.points }}"
+      data-tl="{{ p.timeLimit }}"
+      data-status="{{ p.status }}"
+      data-level="{{ p.level }}"
+      class="row-{{ p.status }}"
+    >
       <td><a href="{{ url_for('problem', code=p.code) }}">{{ p.code }}</a></td>
       <td><a href="{{ url_for('problem', code=p.code) }}">{{ p.name }}</a></td>
-      <td class="muted">{{ (p.tags or []) | join(", ") }}</td>
+      <td>
+        <div class="tags">
+          {% for t in p.tags or [] %}
+          <button type="button" class="tag" data-tag="{{ t }}">{{ t }}</button>
+          {% endfor %}
+        </div>
+      </td>
       <td>{{ p.points }}</td>
       <td>{{ p.timeLimit }}s</td>
-      <td class="verdict-{{ best.get(p.code, {}).get('verdict', '-') }}">{{ best.get(p.code, {}).get('verdict', '—') }}</td>
+      <td>
+        {% if p.status == 'ac' %}
+        <span class="verdict-AC">AC</span>
+        {% elif p.status == 'tried' %}
+        <span class="muted">Intentado</span>
+        {% else %}
+        <span class="muted">—</span>
+        {% endif %}
+      </td>
     </tr>
-    {% else %}
-    <tr><td colspan="6">El pack está vacío.</td></tr>
     {% endfor %}
   </tbody>
 </table>
+</div>
+<p class="empty-state" id="problem-empty" hidden>Ningún problema coincide con la búsqueda. Prueba otro texto o limpia los filtros.</p>
+{% if not problems %}
+<p class="empty-state">El pack está vacío. Sincroniza un repo o deja problemas en <code>problems/</code>.</p>
+{% endif %}
+<p class="hint">Atajo: <kbd>/</kbd> enfoca la búsqueda.</p>
 {% endblock %}

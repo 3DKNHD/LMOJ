@@ -75,6 +75,10 @@ def best_map() -> dict:
     return load_db().get("best", {})
 
 
+def attempted_codes() -> set[str]:
+    return {r["problem"] for r in load_db().get("submissions", []) if r.get("problem")}
+
+
 def points_total(problems: list[dict]) -> tuple[int, int]:
     best = best_map()
     got = 0

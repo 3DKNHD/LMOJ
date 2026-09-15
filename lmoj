@@ -1,0 +1,247 @@
+#!/usr/bin/env python3
+"""LMOJ: juez local estilo DMOJ. Pack de problemas por GitHub."""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import shutil
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
+
+from judge import pack as P  # noqa: E402
+from judge import store  # noqa: E402
+from judge import submit as S  # noqa: E402
+from judge import sync as Y  # noqa: E402
+from judge.paths import PROBLEMS, ROOT as JROOT, TEMPLATE_CPP  # noqa: E402
+
+RED = "\033[31m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+CYAN = "\033[36m"
+BOLD = "\033[1m"
+RESET = "\033[0m"
+
+
+def color(code: str, text: str) -> str:
+    if not sys.stdout.isatty():
+        return text
+    return f"{code}{text}{RESET}"
+
+
+def die(msg: str, code: int = 1) -> int:
+    print(msg)
+    return code
+
+
+def cmd_gui(_: argparse.Namespace) -> int:
+    py = JROOT / ".venv" / "bin" / "python"
+    app = JROOT / "gui" / "app.py"
+    if not py.exists():
+        print("No hay .venv. Una vez, con red:")
+        print("  python3 -m venv .venv")
+        print("  .venv/bin/pip install -r requirements.txt")
+        return 1
+    os.execv(str(py), [str(py), str(app)])
+    return 0
+
+
+def cmd_status(_: argparse.Namespace) -> int:
+    rows = P.list_problems()
+    best = store.best_map()
+    got, total = store.points_total(rows)
+    print(f"{'código':<18} {'pts':<5} {'best':<8} temas")
+    print("-" * 64)
+    for row in rows:
+        code = row["code"]
+        v = best.get(code, {}).get("verdict", "-")
+        vshow = color(GREEN, f"{v:<8}") if v == "AC" else color(YELLOW, f"{v:<8}")
+        tags = ", ".join(row.get("tags") or [])
+        print(f"{code:<18} {row['points']:<5} {vshow} {tags}")
+    print("-" * 64)
+    print(f"{got}/{total} puntos  ·  {len(rows)} problemas")
+    return 0
+
+
+def cmd_test(args: argparse.Namespace) -> int:
+    try:
+        prob = P.find_problem(args.id)
+    except P.ProblemNotFound as e:
+        return die(str(e))
+    meta = P.meta_of(prob)
+    lang = args.lang
+    src_path = P.ensure_workspace(meta["code"], lang)
+    source = src_path.read_text(encoding="utf-8")
+    result = S.run_submission(prob, source, lang, sample_only=args.sample)
+    return _print_result(result, meta["code"])
+
+
+def _print_result(result: dict, code: str) -> int:
+    if result["verdict"] == "CE":
+        print(color(RED, "CE — error de compilación"))
+        print(result.get("compile_error") or "")
+        return 1
+    if result["verdict"] == "SE":
+        print(color(RED, "SE — error del juez / pack"))
+        print(result.get("compile_error") or "")
+        return 1
+    for row in result["cases"]:
+        name = row["name"]
+        extra = " sample" if row.get("sample") else ""
+        v = row["verdict"]
+        dt = row["time"]
+        line = f"{v:<4} {name}{extra}  [{dt:.3f}s]"
+        if v == "AC":
+            print(color(GREEN, line))
+        elif v == "TLE":
+            print(color(YELLOW, line))
+        else:
+            print(color(RED, line))
+            if row.get("sample"):
+                if row.get("expected"):
+                    print(color(CYAN, "--- esperado"))
+                    print(row["expected"][:800])
+                if row.get("got"):
+                    print(color(CYAN, "--- obtuvo"))
+                    print(row["got"][:800])
+    print()
+    passed, total = result["passed"], result["total"]
+    if result["verdict"] == "AC":
+        print(color(GREEN + BOLD, f"AC  {passed}/{total}  {code}"))
+        return 0
+    print(color(RED + BOLD, f"{result['verdict']}  {passed}/{total}  {code}"))
+    return 1
+
+
+def cmd_sync(args: argparse.Namespace) -> int:
+    try:
+        info = Y.sync_pack(args.url, args.branch)
+    except Y.SyncError as e:
+        return die(color(RED, str(e)))
+    print(color(GREEN, f"Pack actualizado ({info.get('mode')})"))
+    if info.get("head"):
+        print(f"commit  {info['head']}  {info.get('message') or ''}")
+    print(f"problemas  {info.get('problems')}")
+    if info.get("last"):
+        print(f"cuando    {info['last']}")
+    return 0
+
+
+def cmd_new_problem(args: argparse.Namespace) -> int:
+    slug = args.slug.strip().lower().replace(" ", "-")
+    dest = PROBLEMS / slug
+    if dest.exists():
+        return die(f"Ya existe {dest}")
+    (dest / "samples").mkdir(parents=True)
+    (dest / "secret").mkdir(parents=True)
+    shutil.copy(TEMPLATE_CPP, dest / "secret" / "sol.cpp")
+    (dest / "meta.json").write_text(
+        json.dumps(
+            {
+                "code": slug,
+                "name": slug,
+                "points": 5,
+                "timeLimit": 1.0,
+                "memoryLimit": 256,
+                "tags": [],
+                "partial": False,
+                "author": "",
+            },
+            indent=2,
+            ensure_ascii=False,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    (dest / "statement.md").write_text(
+        f"# {slug}\n\nDescripción.\n\n## Entrada\n\n## Salida\n\n## Restricciones\n\n",
+        encoding="utf-8",
+    )
+    (dest / "samples" / "01.in").write_text("\n", encoding="utf-8")
+    (dest / "samples" / "01.out").write_text("\n", encoding="utf-8")
+    (dest / "secret" / "gen.py").write_text(
+        f'''"""Generador ÚNICO de {slug}.
+
+No copies un gen genérico. Ataca los bordes de ESTE enunciado.
+El juez llama generate() y corre secret/sol.cpp para las salidas ocultas.
+"""
+
+
+def generate():
+    yield "bordes", "REEMPLAZA ESTO\\n"
+    raise NotImplementedError("Escribe el generador de {slug}, no un template genérico")
+''',
+        encoding="utf-8",
+    )
+    print(color(GREEN, f"Creado {dest}"))
+    print("Edita statement.md, samples/, secret/sol.cpp y secret/gen.py")
+    print("El gen.py tiene que ser de ESTE problema. El juez no acepta el stub.")
+    return 0
+
+
+def cmd_help(_: argparse.Namespace | None = None) -> int:
+    print(
+        """
+LMOJ — juez local (estilo DMOJ, en tu PC)
+
+  ./lmoj gui                 abrir http://127.0.0.1:5050
+  ./lmoj status              problemas y puntos
+  ./lmoj test aplusb         juzgar tu código en workspace/
+  ./lmoj test aplusb --sample
+  ./lmoj test aplusb --lang py3
+  ./lmoj sync                bajar pack desde GitHub (config.json)
+  ./lmoj sync <url>          guardar URL y clonar/actualizar
+  ./lmoj new-problem slug    esqueleto para AUTOR (con gen.py propio)
+
+Los casos ocultos salen del gen.py de cada problema, no de .in copiables.
+""".strip()
+    )
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(add_help=False)
+    sub = parser.add_subparsers(dest="cmd")
+    sub.add_parser("gui")
+    sub.add_parser("status")
+    sub.add_parser("help")
+
+    p_test = sub.add_parser("test")
+    p_test.add_argument("id")
+    p_test.add_argument("--sample", action="store_true")
+    p_test.add_argument("--lang", default="cpp17", choices=["cpp17", "py3"])
+
+    p_sync = sub.add_parser("sync")
+    p_sync.add_argument("url", nargs="?")
+    p_sync.add_argument("--branch", default=None)
+
+    p_new = sub.add_parser("new-problem")
+    p_new.add_argument("slug")
+
+    args, extra = parser.parse_known_args()
+    if extra or args.cmd in (None, "help"):
+        if extra and args.cmd:
+            print("Argumentos de más:", extra)
+        return cmd_help(args)
+    if args.cmd == "gui":
+        return cmd_gui(args)
+    if args.cmd == "status":
+        return cmd_status(args)
+    if args.cmd == "test":
+        return cmd_test(args)
+    if args.cmd == "sync":
+        return cmd_sync(args)
+    if args.cmd == "new-problem":
+        return cmd_new_problem(args)
+    return cmd_help(args)
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except KeyboardInterrupt:
+        print("\nInterrumpido")
+        raise SystemExit(130)

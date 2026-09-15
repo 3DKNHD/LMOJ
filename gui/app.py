@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import html as html_lib
+import re
 import sys
 from pathlib import Path
 
@@ -23,11 +25,26 @@ app = Flask(
 )
 MD = markdown.Markdown(extensions=["fenced_code", "tables", "nl2br"])
 LANGS = [("cpp17", "C++17"), ("py3", "Python 3")]
+MATH_RE = re.compile(r"\$\$(.+?)\$\$|\$([^$\n]+?)\$", re.DOTALL)
+
+
+def _protect_math(text: str) -> tuple[str, list[str]]:
+    slots: list[str] = []
+
+    def repl(match: re.Match[str]) -> str:
+        slots.append(match.group(0))
+        return f"@@MATH{len(slots) - 1}@@"
+
+    return MATH_RE.sub(repl, text), slots
 
 
 def md(text: str) -> str:
+    raw, slots = _protect_math(text or "")
     MD.reset()
-    return MD.convert(text or "")
+    out = MD.convert(raw)
+    for i, chunk in enumerate(slots):
+        out = out.replace(f"@@MATH{i}@@", html_lib.escape(chunk))
+    return out
 
 
 @app.context_processor

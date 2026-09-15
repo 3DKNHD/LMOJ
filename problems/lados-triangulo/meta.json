@@ -1,0 +1,10 @@
+{
+  "code": "lados-triangulo",
+  "name": "¿Forman triángulo?",
+  "points": 1,
+  "timeLimit": 1.0,
+  "memoryLimit": 256,
+  "tags": ["implementación", "geometría"],
+  "partial": false,
+  "author": "LMOJ"
+}

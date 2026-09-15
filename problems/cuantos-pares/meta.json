@@ -1,0 +1,10 @@
+{
+  "code": "cuantos-pares",
+  "name": "Cuántos pares",
+  "points": 1,
+  "timeLimit": 1.0,
+  "memoryLimit": 256,
+  "tags": ["implementación", "paridad"],
+  "partial": false,
+  "author": "LMOJ"
+}

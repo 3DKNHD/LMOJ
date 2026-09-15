@@ -1,0 +1,10 @@
+{
+  "code": "maximo",
+  "name": "El mayor",
+  "points": 1,
+  "timeLimit": 1.0,
+  "memoryLimit": 256,
+  "tags": ["implementación"],
+  "partial": false,
+  "author": "LMOJ"
+}

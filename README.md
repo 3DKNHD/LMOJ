@@ -7,132 +7,160 @@ Juez de programación local al estilo DMOJ.
 
 ---
 
-## English
+## Español
 
-LMOJ runs on your machine: problem statements, an in-browser editor, verdicts, submission history, and editorials.
+LMOJ corre en tu máquina: enunciados, editor en el navegador, veredictos, historial y editoriales.
 
-Hidden tests are **not** shipped as copyable `.in` files. Each problem has its own `secret/gen.py`. The judge runs it with the official solution and caches tests outside the pack.
+### Encender
 
-### Requirements
-
-- Python 3.10+
-- Git
-- `g++` with C++17 (optional: Python 3 to submit as `py3`)
-
-### Install
+Linux / macOS:
 
 ```bash
 git clone https://github.com/3DKNHD/LMOJ.git
 cd LMOJ
+bash install.sh
+./start.sh
+```
+
+Windows: clona el repo (GitHub → Code → Download ZIP, o Git), entra a la carpeta y:
+
+```bat
+install.bat
+start.bat
+```
+
+Abre **http://127.0.0.1:5050**. Para salir, Ctrl+C en la terminal.
+
+Problemas nuevos: en la web, **Sync**.
+
+### Si el script falla
+
+Hace falta **Python 3.10+**. Para enviar en C++ también **g++**. **Git** sirve para clonar y para Sync.
+
+#### Python
+
+- **Debian / Ubuntu:** `sudo apt update && sudo apt install python3 python3-venv python3-pip`
+- **Fedora:** `sudo dnf install python3`
+- **Arch:** `sudo pacman -S python`
+- **macOS:** [python.org/downloads](https://www.python.org/downloads/) o `brew install python`
+- **Windows:** [python.org/downloads](https://www.python.org/downloads/) — marca **Add python.exe to PATH**. O: `winget install Python.Python.3.12`
+
+Comprueba: `python3 --version` (Windows: `py -3 --version`). Tiene que ser 3.10 o más.
+
+Si `install.sh` se queja de `venv`: en Debian/Ubuntu instala `python3-venv` (arriba).
+
+#### Git
+
+- **Debian / Ubuntu:** `sudo apt install git`
+- **Fedora:** `sudo dnf install git`
+- **Arch:** `sudo pacman -S git`
+- **macOS:** `xcode-select --install` o `brew install git`
+- **Windows:** [git-scm.com](https://git-scm.com/download/win) o `winget install Git.Git`
+
+#### g++ (solo si vas a enviar C++)
+
+- **Debian / Ubuntu:** `sudo apt install g++`
+- **Fedora:** `sudo dnf install gcc-c++`
+- **Arch:** `sudo pacman -S gcc`
+- **macOS:** `xcode-select --install` (el `g++` de Apple vale para C++17)
+- **Windows:** [MSYS2](https://www.msys2.org/), luego en su terminal: `pacman -S mingw-w64-ucrt-x86_64-gcc`. Suma `C:\msys64\ucrt64\bin` al PATH. O: `winget install MSYS2.MSYS2`.
+
+Sin g++ igual puedes enviar en **Python 3** desde la web.
+
+#### Instalar LMOJ a mano
+
+Linux / macOS:
+
+```bash
 python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-chmod +x lmoj
-./lmoj gui
+.venv/bin/python -m pip install -r requirements.txt
+./start.sh
 ```
 
-Open http://127.0.0.1:5050. The default port is **5050** (`config.json`).
+Windows:
 
-### Commands
-
+```bat
+py -3 -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+start.bat
 ```
-./lmoj gui
-./lmoj status
-./lmoj test aplusb
-./lmoj test aplusb --sample
-./lmoj test aplusb --lang py3
-./lmoj sync
-./lmoj new-problem my-problem   # pack author, not the contestant
-```
-
-Submitted code is stored in `workspace/`. Submissions and the test cache live in `data/` (not tracked by git).
-
-### Problem pack
-
-A starter pack is already in `problems/` and works offline. See `problems/PACK.md` for the format.
-
-Problems live in **this** repository. **Sync** (UI button or `./lmoj sync`) runs `git pull` on the clone’s configured `origin`. New problems arrive with their statements, samples, generators, **and editorials** — nothing extra to add.
-
-```
-./lmoj sync
-```
-
-### Problem layout
-
-```
-problems/aplusb/
-  meta.json          points, TL, ML, tags
-  statement.md
-  editorial.md       optional public tutorial
-  samples/01.in
-  samples/01.out
-  secret/gen.py      generator for THIS problem
-  secret/sol.cpp     official solution; builds hidden outputs
-```
-
-`generate()` yields `(name, input)` pairs. Do not reuse a generic generator across problems: each `gen.py` should target this statement’s edge cases. The judge never shows hidden input/output (samples only, like DMOJ).
 
 ---
 
-## Español
+## English
 
-LMOJ corre en tu máquina: enunciados, editor en el navegador, veredictos, historial de envíos y editoriales.
+LMOJ runs on your machine: statements, an in-browser editor, verdicts, history, and editorials.
 
-Los casos ocultos **no** se publican como `.in` copiables. Cada problema trae su propio `secret/gen.py`. El juez lo corre con la solución oficial y cachea los tests fuera del pack.
+### Start
 
-### Requisitos
-
-- Python 3.10+
-- Git
-- `g++` con C++17 (opcional: Python 3 para enviar en `py3`)
-
-### Instalación
+Linux / macOS:
 
 ```bash
 git clone https://github.com/3DKNHD/LMOJ.git
 cd LMOJ
+bash install.sh
+./start.sh
+```
+
+Windows: clone the repo, open that folder, then:
+
+```bat
+install.bat
+start.bat
+```
+
+Open **http://127.0.0.1:5050**. Stop with Ctrl+C in the terminal.
+
+New problems: **Sync** in the UI.
+
+### If the script fails
+
+You need **Python 3.10+**. For C++ submissions, **g++**. **Git** is used to clone and to Sync.
+
+#### Python
+
+- **Debian / Ubuntu:** `sudo apt update && sudo apt install python3 python3-venv python3-pip`
+- **Fedora:** `sudo dnf install python3`
+- **Arch:** `sudo pacman -S python`
+- **macOS:** [python.org/downloads](https://www.python.org/downloads/) or `brew install python`
+- **Windows:** [python.org/downloads](https://www.python.org/downloads/) — tick **Add python.exe to PATH**. Or: `winget install Python.Python.3.12`
+
+Check: `python3 --version` (Windows: `py -3 --version`). Must be 3.10+.
+
+If `install.sh` complains about `venv`, install `python3-venv` on Debian/Ubuntu.
+
+#### Git
+
+- **Debian / Ubuntu:** `sudo apt install git`
+- **Fedora:** `sudo dnf install git`
+- **Arch:** `sudo pacman -S git`
+- **macOS:** `xcode-select --install` or `brew install git`
+- **Windows:** [git-scm.com](https://git-scm.com/download/win) or `winget install Git.Git`
+
+#### g++ (only if you submit C++)
+
+- **Debian / Ubuntu:** `sudo apt install g++`
+- **Fedora:** `sudo dnf install gcc-c++`
+- **Arch:** `sudo pacman -S gcc`
+- **macOS:** `xcode-select --install` (Apple’s `g++` is fine for C++17)
+- **Windows:** [MSYS2](https://www.msys2.org/), then `pacman -S mingw-w64-ucrt-x86_64-gcc`. Add `C:\msys64\ucrt64\bin` to PATH. Or: `winget install MSYS2.MSYS2`.
+
+Without g++ you can still submit **Python 3** in the UI.
+
+#### Install LMOJ by hand
+
+Linux / macOS:
+
+```bash
 python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-chmod +x lmoj
-./lmoj gui
+.venv/bin/python -m pip install -r requirements.txt
+./start.sh
 ```
 
-Abre http://127.0.0.1:5050. El puerto por defecto es **5050** (`config.json`).
+Windows:
 
-### Comandos
-
+```bat
+py -3 -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+start.bat
 ```
-./lmoj gui
-./lmoj status
-./lmoj test aplusb
-./lmoj test aplusb --sample
-./lmoj test aplusb --lang py3
-./lmoj sync
-./lmoj new-problem mi-problema   # autor del pack, no el concursante
-```
-
-El código enviado queda en `workspace/`. Envíos y caché en `data/` (no van al git).
-
-### Pack de problemas
-
-El pack de ejemplo está en `problems/` y se puede usar sin red. El formato está en `problems/PACK.md`.
-
-Los problemas viven en **este** repositorio. **Sync** (botón en la web o `./lmoj sync`) hace `git pull` del `origin` ya configurado. Los problemas nuevos llegan con enunciado, samples, generador **y editorial**. No hay que añadir ese detalle aparte.
-
-```
-./lmoj sync
-```
-
-### Estructura de un problema
-
-```
-problems/aplusb/
-  meta.json          puntos, TL, ML, tags
-  statement.md
-  editorial.md       opcional, tutorial público
-  samples/01.in
-  samples/01.out
-  secret/gen.py      generador de ESTE problema
-  secret/sol.cpp     oficial: genera las salidas ocultas
-```
-
-`generate()` produce pares `(nombre, entrada)`. Nada de un generador genérico copiado de un problema a otro: cada `gen.py` ataca los bordes de **este** enunciado. El juez no muestra input/output de casos ocultos (sí de samples, como DMOJ).

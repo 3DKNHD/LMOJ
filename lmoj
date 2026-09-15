@@ -41,9 +41,8 @@ def cmd_gui(_: argparse.Namespace) -> int:
     py = JROOT / ".venv" / "bin" / "python"
     app = JROOT / "gui" / "app.py"
     if not py.exists():
-        print("No hay .venv. Una vez, con red:")
-        print("  python3 -m venv .venv")
-        print("  .venv/bin/pip install -r requirements.txt")
+        print("No hay .venv. Corre ./install.sh (Windows: install.bat).")
+        print("Si falló, mira README.md → Si el script falla.")
         return 1
     os.execv(str(py), [str(py), str(app)])
     return 0

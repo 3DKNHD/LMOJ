@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Problemas · {{ site_name }}{% endblock %}
+{% block main %}
+<h1>Problemas</h1>
+<table class="list">
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Nombre</th>
+      <th>Temas</th>
+      <th>Pts</th>
+      <th>TL</th>
+      <th>Best</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in problems %}
+    <tr>
+      <td><a href="{{ url_for('problem', code=p.code) }}">{{ p.code }}</a></td>
+      <td><a href="{{ url_for('problem', code=p.code) }}">{{ p.name }}</a></td>
+      <td class="muted">{{ (p.tags or []) | join(", ") }}</td>
+      <td>{{ p.points }}</td>
+      <td>{{ p.timeLimit }}s</td>
+      <td class="verdict-{{ best.get(p.code, {}).get('verdict', '-') }}">{{ best.get(p.code, {}).get('verdict', '—') }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6">El pack está vacío.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

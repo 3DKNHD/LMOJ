@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ site_name }}{% endblock %}
+{% block main %}
+<section class="hero">
+  <div>
+    <h1>{{ site_name }}</h1>
+    <p>Juez local al estilo DMOJ. Los casos ocultos los fabrica el <code>gen.py</code> de cada problema, no un banco de <code>.in</code> para copiar.</p>
+  </div>
+  <div class="hero-actions">
+    <a class="btn primary" href="{{ url_for('problems') }}">Lista de problemas</a>
+    <a class="btn" href="{{ url_for('sync_page') }}">Bajar pack de GitHub</a>
+  </div>
+</section>
+
+<section class="grid-2">
+  <article class="card">
+    <h2>Problemas</h2>
+    <table class="plain">
+      <thead>
+        <tr><th>Código</th><th>Nombre</th><th>Pts</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for p in problems %}
+        <tr>
+          <td><a href="{{ url_for('problem', code=p.code) }}">{{ p.code }}</a></td>
+          <td>{{ p.name }}</td>
+          <td>{{ p.points }}</td>
+          <td class="verdict-{{ best.get(p.code, {}).get('verdict', '-') }}">{{ best.get(p.code, {}).get('verdict', '—') }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4">No hay problemas. Usa Sync o deja el pack local en <code>problems/</code>.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </article>
+  <article class="card">
+    <h2>Envíos recientes</h2>
+    <table class="plain">
+      <thead>
+        <tr><th>#</th><th>Problema</th><th>Resultado</th><th>Cuándo</th></tr>
+      </thead>
+      <tbody>
+        {% for r in recent %}
+        <tr>
+          <td><a href="{{ url_for('submission', sid=r.id) }}">{{ r.id }}</a></td>
+          <td>{{ r.problem }}</td>
+          <td class="verdict-{{ r.verdict }}">{{ r.verdict }}</td>
+          <td class="muted">{{ r.when }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4">Todavía no enviaste nada.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if sync.pack_url %}
+    <p class="muted tiny">Pack: {{ sync.pack_url }}{% if sync.head %} · {{ sync.head }}{% endif %}</p>
+    {% endif %}
+  </article>
+</section>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Envíos · {{ site_name }}{% endblock %}
+{% block main %}
+<h1>Envíos{% if filter_problem %} · {{ filter_problem }}{% endif %}</h1>
+<table class="list">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Problema</th>
+      <th>Lenguaje</th>
+      <th>Resultado</th>
+      <th>Casos</th>
+      <th>Tiempo</th>
+      <th>Cuándo</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td><a href="{{ url_for('submission', sid=r.id) }}">{{ r.id }}</a></td>
+      <td><a href="{{ url_for('problem', code=r.problem) }}">{{ r.problem }}</a></td>
+      <td>{{ r.lang }}</td>
+      <td class="verdict-{{ r.verdict }}">{{ r.verdict }}{% if r.sample_only %} <em>sample</em>{% endif %}</td>
+      <td>{{ r.passed }}/{{ r.total }}</td>
+      <td>{{ "%.3f"|format(r.time or 0) }}s</td>
+      <td class="muted">{{ r.when }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7">Sin envíos.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

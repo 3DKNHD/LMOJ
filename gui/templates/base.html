@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ site_name }}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="nav">
+    <a class="logo" href="{{ url_for('home') }}">{{ site_name }}</a>
+    <nav>
+      <a href="{{ url_for('problems') }}">Problemas</a>
+      <a href="{{ url_for('submissions') }}">Envíos</a>
+      <a href="{{ url_for('sync_page') }}">Sync</a>
+    </nav>
+    <div class="score">{{ points_got }} / {{ points_total }} pts · {{ ac_count }}/{{ problem_count }} AC</div>
+  </header>
+  <main class="page">
+    {% block main %}{% endblock %}
+  </main>
+</body>
+</html>

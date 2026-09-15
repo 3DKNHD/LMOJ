@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Envío {{ row.id }} · {{ site_name }}{% endblock %}
+{% block main %}
+<p class="crumb"><a href="{{ url_for('submissions') }}">Envíos</a> / {{ row.id }}</p>
+<h1>Envío #{{ row.id }}</h1>
+<p class="meta">
+  <a href="{{ url_for('problem', code=row.problem) }}">{{ row.problem }}</a>
+  · {{ row.lang }}
+  · <span class="verdict-{{ row.verdict }}">{{ row.verdict }}</span>
+  · {{ row.passed }}/{{ row.total }}
+  · {{ row.when }}
+</p>
+
+{% if row.compile_error %}
+<pre class="ce">{{ row.compile_error }}</pre>
+{% endif %}
+
+{% if row.cases %}
+<table class="cases">
+  <thead>
+    <tr><th>Caso</th><th>Veredicto</th><th>Tiempo</th></tr>
+  </thead>
+  <tbody>
+    {% for c in row.cases %}
+    <tr class="{{ c.verdict }}">
+      <td>{{ c.name }}{% if c.sample %} <em>sample</em>{% else %} <em>oculto</em>{% endif %}</td>
+      <td>{{ c.verdict }}</td>
+      <td>{{ "%.3f"|format(c.time) }}s</td>
+    </tr>
+    {% if c.verdict != "AC" and c.sample %}
+    <tr class="detail">
+      <td colspan="3">
+        {% if c.input_preview %}<p>Input</p><pre>{{ c.input_preview }}</pre>{% endif %}
+        {% if c.expected %}<p>Esperado</p><pre>{{ c.expected }}</pre>{% endif %}
+        {% if c.got %}<p>Obtuvo</p><pre>{{ c.got }}</pre>{% endif %}
+      </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<h2>Código</h2>
+<pre class="ce">{{ row.source }}</pre>
+{% endblock %}

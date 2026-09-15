@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}{{ meta.code }} · {{ meta.name }}{% endblock %}
+{% block main %}
+<header class="top">
+  <div>
+    <p class="crumb"><a href="{{ url_for('problems') }}">Problemas</a> / {{ meta.code }}</p>
+    <h1>{{ meta.name }}</h1>
+    <p class="meta">
+      {{ meta.points }} pts
+      · TL {{ meta.timeLimit }}s
+      · ML {{ meta.memoryLimit }} MB
+      · {{ (meta.tags or []) | join(" · ") }}
+      {% if best.verdict == "AC" %}<span class="badge ac">AC</span>{% endif %}
+    </p>
+  </div>
+  <a class="btn ghost" href="{{ url_for('submissions', problem=meta.code) }}">Envíos de este problema</a>
+</header>
+
+<section class="split">
+  <article class="statement">
+    {{ statement_html | safe }}
+    {% if samples %}
+    <h2>Ejemplos</h2>
+    {% for s in samples %}
+    <h3>Sample {{ s.name }}</h3>
+    <div class="io">
+      <div>
+        <p>Entrada</p>
+        <pre>{{ s.input }}</pre>
+      </div>
+      <div>
+        <p>Salida</p>
+        <pre>{{ s.output }}</pre>
+      </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <p class="muted tiny">Los casos ocultos se generan al enviar. El juez no muestra su entrada ni su salida.</p>
+  </article>
+
+  <section class="editor-wrap">
+    <form method="post" id="submit-form">
+      <div class="editor-bar">
+        <label for="lang">Lenguaje</label>
+        <select id="lang" name="lang">
+          {% for val, label in langs %}
+          <option value="{{ val }}" {% if val == lang %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <textarea id="code" name="code" spellcheck="false">{{ code }}</textarea>
+      <div class="actions">
+        <button class="btn primary" type="submit" name="mode" value="all">Submit</button>
+        <button class="btn" type="submit" name="mode" value="sample">Solo samples</button>
+      </div>
+    </form>
+
+    {% if result %}
+    <div class="verdict-box verdict-{{ result.verdict }}">
+      <strong>{{ result.verdict }}</strong>
+      {% if result.total %}
+      <span>{{ result.passed }}/{{ result.total }} casos</span>
+      {% endif %}
+      {% if result.points_awarded %}<span>+{{ result.points_awarded }} pts</span>{% endif %}
+      {% if result.sample_only %}<span class="hint">solo samples — no puntúa</span>{% endif %}
+    </div>
+    {% if result.compile_error %}
+    <pre class="ce">{{ result.compile_error }}</pre>
+    {% endif %}
+    {% if result.cases %}
+    <table class="cases">
+      <thead>
+        <tr><th>Caso</th><th>Veredicto</th><th>Tiempo</th></tr>
+      </thead>
+      <tbody>
+        {% for c in result.cases %}
+        <tr class="{{ c.verdict }}">
+          <td>{{ c.name }}{% if c.sample %} <em>sample</em>{% endif %}{% if not c.sample %} <em>oculto</em>{% endif %}</td>
+          <td>{{ c.verdict }}</td>
+          <td>{{ "%.3f"|format(c.time) }}s</td>
+        </tr>
+        {% if c.verdict != "AC" and c.sample %}
+        <tr class="detail">
+          <td colspan="3">
+            {% if c.input_preview %}
+            <p>Input (sample)</p>
+            <pre>{{ c.input_preview }}</pre>
+            {% endif %}
+            {% if c.expected %}
+            <p>Esperado</p>
+            <pre>{{ c.expected }}</pre>
+            {% endif %}
+            {% if c.got %}
+            <p>Obtuvo</p>
+            <pre>{{ c.got }}</pre>
+            {% endif %}
+            {% if c.stderr %}
+            <p>stderr</p>
+            <pre>{{ c.stderr }}</pre>
+            {% endif %}
+          </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    {% endif %}
+
+    {% if recent %}
+    <h3 class="subhead">Tus envíos</h3>
+    <ul class="mini-subs">
+      {% for r in recent %}
+      <li>
+        <a href="{{ url_for('submission', sid=r.id) }}">#{{ r.id }}</a>
+        <span class="verdict-{{ r.verdict }}">{{ r.verdict }}</span>
+        <span class="muted">{{ r.when }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+</section>
+
+<script>
+  const ta = document.getElementById("code");
+  ta.addEventListener("keydown", (e) => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const s = ta.selectionStart, n = ta.selectionEnd;
+      ta.value = ta.value.slice(0, s) + "    " + ta.value.slice(n);
+      ta.selectionStart = ta.selectionEnd = s + 4;
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      document.querySelector(".btn.primary").click();
+    }
+  });
+  document.getElementById("submit-form").addEventListener("submit", (e) => {
+    document.querySelectorAll(".actions button").forEach((b) => { b.disabled = true; });
+    if (e.submitter) e.submitter.textContent = "Juzgando…";
+  });
+  document.getElementById("lang").addEventListener("change", () => {
+    const u = new URL(window.location.href);
+    u.searchParams.set("lang", document.getElementById("lang").value);
+    window.location.href = u.toString();
+  });
+</script>
+{% endblock %}

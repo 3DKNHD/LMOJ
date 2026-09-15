@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Sync · {{ site_name }}{% endblock %}
+{% block main %}
+<h1>Pack de problemas</h1>
+<p>El juez baja el repo de GitHub que tú actualizas. Cada problema tiene que traer su propio <code>secret/gen.py</code>.</p>
+
+{% if error %}
+<div class="verdict-box verdict-WA">{{ error }}</div>
+{% endif %}
+{% if info.updated %}
+<div class="verdict-box verdict-AC">Pack actualizado ({{ info.mode }}) · {{ info.problems }} problemas</div>
+{% endif %}
+
+<form method="post" class="card form">
+  <label>URL del repo (GitHub)</label>
+  <input type="url" name="pack_url" placeholder="https://github.com/tu-usuario/LMOJ-problems.git" value="{{ cfg.pack_url or info.pack_url }}">
+  <label>Rama</label>
+  <input type="text" name="pack_branch" value="{{ cfg.pack_branch or 'main' }}">
+  <button class="btn primary" type="submit">Sincronizar ahora</button>
+</form>
+
+<dl class="meta-list">
+  <dt>Último sync</dt><dd>{{ info.last or "nunca" }}</dd>
+  <dt>¿Es clone git?</dt><dd>{{ "sí" if info.is_clone else "no (pack local embebido)" }}</dd>
+  {% if info.head %}
+  <dt>HEAD</dt><dd>{{ info.head }} — {{ info.message }}</dd>
+  {% endif %}
+</dl>
+{% endblock %}

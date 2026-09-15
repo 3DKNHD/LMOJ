@@ -1,0 +1,10 @@
+{
+  "code": "consultas-suma",
+  "name": "Consultas de suma",
+  "points": 3,
+  "timeLimit": 1.0,
+  "memoryLimit": 256,
+  "tags": ["prefijos"],
+  "partial": false,
+  "author": "LMOJ"
+}

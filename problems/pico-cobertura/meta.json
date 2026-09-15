@@ -1,0 +1,10 @@
+{
+  "code": "pico-cobertura",
+  "name": "Pico de cobertura",
+  "points": 4,
+  "timeLimit": 1.0,
+  "memoryLimit": 256,
+  "tags": ["diferencia"],
+  "partial": false,
+  "author": "LMOJ"
+}

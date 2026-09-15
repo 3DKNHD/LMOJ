@@ -1,0 +1,10 @@
+{
+  "code": "cuenta-div",
+  "name": "Cuántos divisores",
+  "points": 3,
+  "timeLimit": 1.0,
+  "memoryLimit": 256,
+  "tags": ["math", "criba"],
+  "partial": false,
+  "author": "LMOJ"
+}

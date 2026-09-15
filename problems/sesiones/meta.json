@@ -1,0 +1,10 @@
+{
+  "code": "sesiones",
+  "name": "Sesiones sin choque",
+  "points": 4,
+  "timeLimit": 1.0,
+  "memoryLimit": 256,
+  "tags": ["greedy"],
+  "partial": false,
+  "author": "LMOJ"
+}

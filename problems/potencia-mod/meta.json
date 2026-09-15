@@ -1,0 +1,10 @@
+{
+  "code": "potencia-mod",
+  "name": "Potencia módulo",
+  "points": 3,
+  "timeLimit": 1.0,
+  "memoryLimit": 256,
+  "tags": ["math", "binpow"],
+  "partial": false,
+  "author": "LMOJ"
+}

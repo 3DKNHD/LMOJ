@@ -1,0 +1,10 @@
+{
+  "code": "ruta-sin-peso",
+  "name": "Ruta sin peso",
+  "points": 5,
+  "timeLimit": 1.5,
+  "memoryLimit": 256,
+  "tags": ["bfs", "grafos"],
+  "partial": false,
+  "author": "LMOJ"
+}

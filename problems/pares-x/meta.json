@@ -1,0 +1,10 @@
+{
+  "code": "pares-x",
+  "name": "Pares que suman X",
+  "points": 3,
+  "timeLimit": 1.0,
+  "memoryLimit": 256,
+  "tags": ["two pointers", "conteo"],
+  "partial": false,
+  "author": "LMOJ"
+}

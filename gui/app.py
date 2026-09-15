@@ -175,6 +175,24 @@ def problem(code: str):
         result=result,
         best=best,
         recent=store.submissions(limit=6, problem=meta["code"]),
+        has_editorial=P.has_editorial(prob),
+    )
+
+
+@app.route("/problem/<code>/editorial")
+def editorial(code: str):
+    try:
+        prob = P.find_problem(code)
+    except P.ProblemNotFound:
+        abort(404)
+    text = P.editorial_md(prob)
+    if not text:
+        abort(404)
+    meta = P.public_meta(prob)
+    return render_template(
+        "editorial.html",
+        meta=meta,
+        editorial_html=md(text),
     )
 
 

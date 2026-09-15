@@ -6,6 +6,7 @@ bajarlo en el juez con **Sync**.
 ## Qué ve el usuario
 
 - `statement.md` y `samples/*.in|*.out` — públicos
+- `editorial.md` — opcional, tutorial público (no pongas `gen.py` aquí)
 - `meta.json` — límites y puntos
 
 ## Qué no debe copiar

@@ -77,6 +77,17 @@ def statement_md(prob: Path) -> str:
     return sp.read_text(encoding="utf-8")
 
 
+def editorial_md(prob: Path) -> str:
+    sp = prob / "editorial.md"
+    if not sp.exists():
+        return ""
+    return sp.read_text(encoding="utf-8")
+
+
+def has_editorial(prob: Path) -> bool:
+    return (prob / "editorial.md").is_file()
+
+
 def sample_files(prob: Path) -> list[tuple[Path, Path]]:
     samples = prob / "samples"
     if not samples.is_dir():

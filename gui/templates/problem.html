@@ -45,6 +45,12 @@
     {% endfor %}
     {% endif %}
     <p class="muted tiny">Los casos ocultos se generan al enviar. El juez no muestra su entrada ni su salida.</p>
+    {% if has_editorial %}
+    <p class="editorial-cta">
+      <a class="btn primary" href="{{ url_for('editorial', code=meta.code) }}">Ver editorial</a>
+      <span class="muted tiny">Explicación de la solución (spoiler).</span>
+    </p>
+    {% endif %}
   </article>
 
   <section class="editor-wrap">

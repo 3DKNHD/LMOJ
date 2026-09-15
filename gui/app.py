@@ -221,21 +221,16 @@ def submission(sid: int):
 
 @app.route("/sync", methods=["GET", "POST"])
 def sync_page():
-    cfg = load_config()
     error = None
     info = Y.last_sync_info()
     if request.method == "POST":
-        url = (request.form.get("pack_url") or "").strip()
-        branch = (request.form.get("pack_branch") or "main").strip()
         try:
-            info = Y.sync_pack(url or None, branch or None)
+            info = Y.sync_repo()
         except Y.SyncError as e:
             error = str(e)
             info = Y.last_sync_info()
-        cfg = load_config()
     return render_template(
         "sync.html",
-        cfg=cfg,
         info=info,
         error=error,
     )

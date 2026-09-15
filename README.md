@@ -50,13 +50,11 @@ Submitted code is stored in `workspace/`. Submissions and the test cache live in
 
 A starter pack is already in `problems/` and works offline. See `problems/PACK.md` for the format.
 
-To pull another pack from GitHub:
+Problems live in **this** repository. **Sync** (UI button or `./lmoj sync`) runs `git pull` on the clone’s configured `origin`. New problems arrive with their statements, samples, generators, **and editorials** — nothing extra to add.
 
-1. That repository’s root **is** the pack (one folder per problem).
-2. In the UI: **Sync**, paste `https://github.com/USER/REPO.git`.
-3. Or run `./lmoj sync https://github.com/USER/REPO.git`.
-
-The URL is saved in `config.json`. Later `./lmoj sync` runs `git pull`.
+```
+./lmoj sync
+```
 
 ### Problem layout
 
@@ -118,13 +116,11 @@ El código enviado queda en `workspace/`. Envíos y caché en `data/` (no van al
 
 El pack de ejemplo está en `problems/` y se puede usar sin red. El formato está en `problems/PACK.md`.
 
-Para bajar otro pack desde GitHub:
+Los problemas viven en **este** repositorio. **Sync** (botón en la web o `./lmoj sync`) hace `git pull` del `origin` ya configurado. Los problemas nuevos llegan con enunciado, samples, generador **y editorial**. No hay que añadir ese detalle aparte.
 
-1. La raíz de ese repositorio **es** el pack (una carpeta por problema).
-2. En la web: **Sync**, pega `https://github.com/USUARIO/REPO.git`.
-3. O: `./lmoj sync https://github.com/USUARIO/REPO.git`.
-
-La URL queda en `config.json`. Los siguientes `./lmoj sync` hacen `git pull`.
+```
+./lmoj sync
+```
 
 ### Estructura de un problema
 

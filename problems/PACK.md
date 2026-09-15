@@ -1,19 +1,24 @@
 # Pack de problemas LMOJ
 
-Este directorio es el pack. Puedes versionarlo en un repo de GitHub aparte y
-bajarlo en el juez con **Sync**.
+Este directorio es el pack: vive en el mismo repo que el juez.
+**Sync** hace `git pull` del `origin` de este clone. Problemas nuevos
+llegan con enunciado, samples, `secret/` **y** `editorial.md`.
 
-## Qué ve el usuario
+## Qué ve el usuario (en la web)
 
 - `statement.md` y `samples/*.in|*.out` — públicos
-- `editorial.md` — opcional, tutorial público (no pongas `gen.py` aquí)
+- `editorial.md` — tutorial (el juez lo muestra en /editorial)
 - `meta.json` — límites y puntos
 
-## Qué no debe copiar
+## Qué no muestra la web (sí está en el git)
 
 - `secret/gen.py` — generador **único de este problema**
 - `secret/sol.cpp` (o `sol.py`) — solución oficial, produce las salidas ocultas
 - `secret/checker.py` — opcional
+
+El juez necesita esos archivos para generar casos. Quien clone el repo
+puede abrirlos en disco; la GUI no los sirve. No subas tokens, envíos
+de usuarios ni `data/` / `workspace/`.
 
 No pongas casos ocultos como `.in` en el repo. El juez llama `generate()` y
 cachea los tests fuera de `problems/` (`data/cache/`).
@@ -45,6 +50,6 @@ copiado de otro problema: ataca los bordes de **este** enunciado.
 
 ## Publicar actualizaciones
 
-1. Repo GitHub cuya raíz sea este pack (una carpeta por problema).
-2. En LMOJ: Sync → pega la URL `https://github.com/USUARIO/REPO.git`.
-3. Cuando agregues problemas, `git push` y en el PC del juez dale otra vez a Sync.
+1. Agrega la carpeta del problema (con `editorial.md` si hay tutorial).
+2. `git push` al origin de este repo.
+3. En cada máquina: **Sync** o `./lmoj sync`.

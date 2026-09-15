@@ -19,7 +19,7 @@
   </div>
   <div class="hero-actions">
     <a class="btn primary" href="{{ url_for('problems') }}">Lista de problemas</a>
-    <a class="btn" href="{{ url_for('sync_page') }}">Bajar pack de GitHub</a>
+    <a class="btn" href="{{ url_for('sync_page') }}">Sincronizar</a>
   </div>
 </section>
 
@@ -78,8 +78,8 @@
         {% endfor %}
       </tbody>
     </table>
-    {% if sync.pack_url %}
-    <p class="muted tiny">Pack: {{ sync.pack_url }}{% if sync.head %} · {{ sync.head }}{% endif %}</p>
+    {% if sync.remote %}
+    <p class="muted tiny">{{ sync.remote }}{% if sync.head %} · {{ sync.head }}{% endif %}</p>
     {% endif %}
   </article>
 </section>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LMOJ: juez local estilo DMOJ. Pack de problemas por GitHub."""
+"""LMOJ: juez local estilo DMOJ."""
 from __future__ import annotations
 
 import argparse
@@ -116,17 +116,20 @@ def _print_result(result: dict, code: str) -> int:
     return 1
 
 
-def cmd_sync(args: argparse.Namespace) -> int:
+def cmd_sync(_: argparse.Namespace) -> int:
     try:
-        info = Y.sync_pack(args.url, args.branch)
+        info = Y.sync_repo()
     except Y.SyncError as e:
         return die(color(RED, str(e)))
-    print(color(GREEN, f"Pack actualizado ({info.get('mode')})"))
+    print(color(GREEN, "Actualizado"))
+    if info.get("remote"):
+        print(f"remote     {info['remote']}")
     if info.get("head"):
-        print(f"commit  {info['head']}  {info.get('message') or ''}")
-    print(f"problemas  {info.get('problems')}")
+        print(f"commit     {info['head']}  {info.get('message') or ''}")
+    print(f"problemas  {info.get('problems')}  ({info.get('new_problems', 0)} nuevos)")
+    print(f"editoriales {info.get('editorials')}  ({info.get('new_editorials', 0)} nuevas)")
     if info.get("last"):
-        print(f"cuando    {info['last']}")
+        print(f"cuando     {info['last']}")
     return 0
 
 
@@ -192,8 +195,7 @@ LMOJ — juez local (estilo DMOJ, en tu PC)
   ./lmoj test aplusb         juzgar tu código en workspace/
   ./lmoj test aplusb --sample
   ./lmoj test aplusb --lang py3
-  ./lmoj sync                bajar pack desde GitHub (config.json)
-  ./lmoj sync <url>          guardar URL y clonar/actualizar
+  ./lmoj sync                git pull del origin (problemas y editoriales)
   ./lmoj new-problem slug    esqueleto para AUTOR (con gen.py propio)
 
 Los casos ocultos salen del gen.py de cada problema, no de .in copiables.
@@ -215,8 +217,6 @@ def main() -> int:
     p_test.add_argument("--lang", default="cpp17", choices=["cpp17", "py3"])
 
     p_sync = sub.add_parser("sync")
-    p_sync.add_argument("url", nargs="?")
-    p_sync.add_argument("--branch", default=None)
 
     p_new = sub.add_parser("new-problem")
     p_new.add_argument("slug")

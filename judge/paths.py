@@ -17,8 +17,6 @@ def load_config() -> dict:
     if not CONFIG_PATH.exists():
         return {
             "site_name": "LMOJ",
-            "pack_url": "",
-            "pack_branch": "main",
             "host": "127.0.0.1",
             "port": 5050,
         }

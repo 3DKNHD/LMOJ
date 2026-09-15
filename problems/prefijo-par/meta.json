@@ -1,0 +1,10 @@
+{
+  "code": "prefijo-par",
+  "name": "Prefijos pares",
+  "points": 3,
+  "timeLimit": 1.0,
+  "memoryLimit": 256,
+  "tags": ["prefijos", "paridad"],
+  "partial": false,
+  "author": "LMOJ"
+}

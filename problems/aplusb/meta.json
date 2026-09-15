@@ -1,0 +1,10 @@
+{
+  "code": "aplusb",
+  "name": "A más B",
+  "points": 1,
+  "timeLimit": 1.0,
+  "memoryLimit": 256,
+  "tags": ["implementación"],
+  "partial": false,
+  "author": "LMOJ"
+}

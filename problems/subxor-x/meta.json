@@ -1,0 +1,13 @@
+{
+  "code": "subxor-x",
+  "name": "Subarreglos XOR",
+  "points": 8,
+  "timeLimit": 2.0,
+  "memoryLimit": 256,
+  "tags": [
+    "prefijos",
+    "xor"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

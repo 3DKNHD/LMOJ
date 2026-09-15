@@ -1,0 +1,13 @@
+{
+  "code": "gcd-consultas",
+  "name": "GCD en rango",
+  "points": 6,
+  "timeLimit": 1.5,
+  "memoryLimit": 256,
+  "tags": [
+    "sparse table",
+    "math"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

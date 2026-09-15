@@ -1,0 +1,13 @@
+{
+  "code": "caminos-dag",
+  "name": "Caminos en DAG",
+  "points": 8,
+  "timeLimit": 2.0,
+  "memoryLimit": 256,
+  "tags": [
+    "dp",
+    "toposort"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

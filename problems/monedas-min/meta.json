@@ -1,0 +1,13 @@
+{
+  "code": "monedas-min",
+  "name": "Mínimas monedas",
+  "points": 7,
+  "timeLimit": 2.0,
+  "memoryLimit": 256,
+  "tags": [
+    "dp",
+    "knapsack"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

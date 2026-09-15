@@ -1,0 +1,13 @@
+{
+  "code": "kmp-ocurre",
+  "name": "Ocurrencias del patrón",
+  "points": 8,
+  "timeLimit": 2.0,
+  "memoryLimit": 256,
+  "tags": [
+    "kmp",
+    "strings"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

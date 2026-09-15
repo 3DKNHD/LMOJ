@@ -1,0 +1,12 @@
+{
+  "code": "lis-estricta",
+  "name": "Subsecuencia creciente",
+  "points": 8,
+  "timeLimit": 2.0,
+  "memoryLimit": 256,
+  "tags": [
+    "lis"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

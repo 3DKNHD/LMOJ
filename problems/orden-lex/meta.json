@@ -1,0 +1,12 @@
+{
+  "code": "orden-lex",
+  "name": "Orden lexicográfico",
+  "points": 8,
+  "timeLimit": 2.0,
+  "memoryLimit": 256,
+  "tags": [
+    "toposort"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

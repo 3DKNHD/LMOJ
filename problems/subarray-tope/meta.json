@@ -1,0 +1,12 @@
+{
+  "code": "subarray-tope",
+  "name": "Subarreglo con tope",
+  "points": 6,
+  "timeLimit": 1.5,
+  "memoryLimit": 256,
+  "tags": [
+    "two pointers"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

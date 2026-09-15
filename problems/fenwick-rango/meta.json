@@ -1,0 +1,12 @@
+{
+  "code": "fenwick-rango",
+  "name": "Suma con updates",
+  "points": 8,
+  "timeLimit": 2.0,
+  "memoryLimit": 256,
+  "tags": [
+    "fenwick"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

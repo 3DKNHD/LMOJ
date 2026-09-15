@@ -1,0 +1,13 @@
+{
+  "code": "diametro-arbol",
+  "name": "Diámetro del árbol",
+  "points": 8,
+  "timeLimit": 2.0,
+  "memoryLimit": 256,
+  "tags": [
+    "árboles",
+    "bfs"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

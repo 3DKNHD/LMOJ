@@ -1,0 +1,13 @@
+{
+  "code": "mochila-01",
+  "name": "Mochila 0/1",
+  "points": 8,
+  "timeLimit": 2.0,
+  "memoryLimit": 256,
+  "tags": [
+    "dp",
+    "knapsack"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

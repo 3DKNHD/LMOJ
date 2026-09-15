@@ -1,0 +1,13 @@
+{
+  "code": "rutas-ll",
+  "name": "Rutas con peso",
+  "points": 8,
+  "timeLimit": 2.0,
+  "memoryLimit": 256,
+  "tags": [
+    "dijkstra",
+    "grafos"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

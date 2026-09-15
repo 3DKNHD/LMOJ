@@ -1,0 +1,13 @@
+{
+  "code": "mst-suma",
+  "name": "Red mínima",
+  "points": 8,
+  "timeLimit": 2.0,
+  "memoryLimit": 256,
+  "tags": [
+    "mst",
+    "dsu"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

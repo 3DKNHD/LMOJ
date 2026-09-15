@@ -1,0 +1,13 @@
+{
+  "code": "submatriz-suma",
+  "name": "Suma de submatriz",
+  "points": 6,
+  "timeLimit": 1.5,
+  "memoryLimit": 256,
+  "tags": [
+    "prefijos",
+    "2d"
+  ],
+  "partial": false,
+  "author": "LMOJ"
+}

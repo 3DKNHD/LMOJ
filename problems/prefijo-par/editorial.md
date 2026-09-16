@@ -33,26 +33,40 @@ Chequeaste si **el elemento** era par, no la **suma del prefijo**.
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
 
+bool es_par(long long x) {
+    return x % 2 == 0;
+}
+
+int contar_prefijos_pares(const vector<long long>& a) {
+    long long prefijo = 0;
+    int cuantos = 0;
+    for (long long x : a) {
+        prefijo += x;
+        if (es_par(prefijo)) {
+            ++cuantos;
+        }
+    }
+    return cuantos;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+
     int n;
     cin >> n;
-    long long pref = 0;
-    int ans = 0;
+    vector<long long> a(n);
     for (int i = 0; i < n; ++i) {
-        long long x;
-        cin >> x;
-        pref += x;
-        if ((pref & 1) == 0) ++ans;
+        cin >> a[i];
     }
-    cout << ans << "\n";
+
+    cout << contar_prefijos_pares(a) << "\n";
     return 0;
 }
 ```

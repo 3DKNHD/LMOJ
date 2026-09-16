@@ -33,29 +33,34 @@ Respuesta: $2$. No $4$ ni $6$.
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    int n;
-    cin >> n;
-    long long best;
-    cin >> best;
-    int pos = 1;
-    for (int i = 2; i <= n; ++i) {
-        long long x;
-        cin >> x;
-        if (x < best) {
-            best = x;
+int posicion_del_minimo(const vector<long long>& a) {
+    int pos = 0;
+    for (int i = 1; i < (int)a.size(); ++i) {
+        if (a[i] < a[pos]) {
             pos = i;
         }
     }
-    cout << pos << "\n";
+    return pos + 1;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    vector<long long> a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+    }
+
+    cout << posicion_del_minimo(a) << "\n";
     return 0;
 }
 ```

@@ -1,28 +1,42 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+long long contar_pares(const vector<long long>& a, long long objetivo) {
+    map<long long, long long> freq;
+    for (long long x : a) {
+        freq[x]++;
+    }
+
+    long long respuesta = 0;
+    for (auto [valor, veces] : freq) {
+        long long falta = objetivo - valor;
+        if (falta < valor) {
+            continue;
+        }
+        if (falta == valor) {
+            respuesta += veces * (veces - 1) / 2;
+            continue;
+        }
+        auto it = freq.find(falta);
+        if (it != freq.end()) {
+            respuesta += veces * it->second;
+        }
+    }
+    return respuesta;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+
     int n;
-    long long X;
-    cin >> n >> X;
-    map<long long, long long> f;
+    long long objetivo;
+    cin >> n >> objetivo;
+    vector<long long> a(n);
     for (int i = 0; i < n; ++i) {
-        long long x;
-        cin >> x;
-        f[x]++;
+        cin >> a[i];
     }
-    long long ans = 0;
-    for (auto [v, c] : f) {
-        long long need = X - v;
-        if (need < v) continue;
-        if (need == v) ans += c * (c - 1) / 2;
-        else {
-            auto it = f.find(need);
-            if (it != f.end()) ans += c * it->second;
-        }
-    }
-    cout << ans << "\n";
+
+    cout << contar_pares(a, objetivo) << "\n";
     return 0;
 }

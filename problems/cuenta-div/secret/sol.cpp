@@ -1,19 +1,30 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+const int MAXN = 1000000;
+
+vector<int> contar_divisores_hasta(int limite) {
+    vector<int> divisores(limite + 1, 0);
+    for (int i = 1; i <= limite; ++i) {
+        for (int j = i; j <= limite; j += i) {
+            ++divisores[j];
+        }
+    }
+    return divisores;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    const int N = 1000000;
-    vector<int> d(N + 1, 0);
-    for (int i = 1; i <= N; ++i)
-        for (int j = i; j <= N; j += i) ++d[j];
-    int T;
-    cin >> T;
-    while (T--) {
+
+    vector<int> divisores = contar_divisores_hasta(MAXN);
+
+    int casos;
+    cin >> casos;
+    while (casos--) {
         int n;
         cin >> n;
-        cout << d[n] << "\n";
+        cout << divisores[n] << "\n";
     }
     return 0;
 }

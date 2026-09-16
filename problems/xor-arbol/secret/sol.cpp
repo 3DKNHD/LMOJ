@@ -1,58 +1,107 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    int n, q;
-    cin >> n >> q;
-    vector<int> a(n + 1);
-    for (int i = 1; i <= n; ++i) cin >> a[i];
-    vector<vector<int>> g(n + 1);
-    for (int i = 0; i < n - 1; ++i) {
-        int u, v;
-        cin >> u >> v;
+const int LOG = 16;
+
+struct ArbolXor {
+    int n;
+    vector<int> valor;
+    vector<int> profundidad;
+    vector<int> xor_desde_raiz;
+    vector<vector<int>> g;
+    vector<array<int, LOG>> padre;
+
+    ArbolXor(int tam)
+        : n(tam),
+          valor(tam + 1),
+          profundidad(tam + 1),
+          xor_desde_raiz(tam + 1),
+          g(tam + 1),
+          padre(tam + 1) {
+        for (int i = 0; i <= n; ++i) {
+            padre[i].fill(0);
+        }
+    }
+
+    void arista(int u, int v) {
         g[u].push_back(v);
         g[v].push_back(u);
     }
-    const int LOG = 16;
-    vector<int> depth(n + 1), pxor(n + 1);
-    vector<array<int, 16>> up(n + 1);
-    for (int i = 0; i <= n; ++i) up[i].fill(0);
 
-    function<void(int, int)> dfs = [&](int u, int p) {
-        up[u][0] = p;
-        for (int k = 1; k < LOG; ++k) up[u][k] = up[up[u][k - 1]][k - 1];
+    void preparar() {
+        xor_desde_raiz[1] = valor[1];
+        dfs(1, 1);
+    }
+
+    int xor_camino(int u, int v) const {
+        int w = lca(u, v);
+        return xor_desde_raiz[u] ^ xor_desde_raiz[v] ^ valor[w];
+    }
+
+private:
+    void dfs(int u, int p) {
+        padre[u][0] = p;
+        for (int k = 1; k < LOG; ++k) {
+            padre[u][k] = padre[padre[u][k - 1]][k - 1];
+        }
         for (int v : g[u]) {
-            if (v == p) continue;
-            depth[v] = depth[u] + 1;
-            pxor[v] = pxor[u] ^ a[v];
+            if (v == p) {
+                continue;
+            }
+            profundidad[v] = profundidad[u] + 1;
+            xor_desde_raiz[v] = xor_desde_raiz[u] ^ valor[v];
             dfs(v, u);
         }
-    };
-    pxor[1] = a[1];
-    dfs(1, 1);
+    }
 
-    auto lca = [&](int u, int v) {
-        if (depth[u] < depth[v]) swap(u, v);
-        int diff = depth[u] - depth[v];
-        for (int k = 0; k < LOG; ++k)
-            if (diff >> k & 1) u = up[u][k];
-        if (u == v) return u;
-        for (int k = LOG - 1; k >= 0; --k)
-            if (up[u][k] != up[v][k]) {
-                u = up[u][k];
-                v = up[v][k];
+    int subir(int u, int pasos) const {
+        for (int k = 0; k < LOG; ++k) {
+            if (pasos >> k & 1) {
+                u = padre[u][k];
             }
-        return up[u][0];
-    };
+        }
+        return u;
+    }
+
+    int lca(int u, int v) const {
+        if (profundidad[u] < profundidad[v]) {
+            swap(u, v);
+        }
+        u = subir(u, profundidad[u] - profundidad[v]);
+        if (u == v) {
+            return u;
+        }
+        for (int k = LOG - 1; k >= 0; --k) {
+            if (padre[u][k] != padre[v][k]) {
+                u = padre[u][k];
+                v = padre[v][k];
+            }
+        }
+        return padre[u][0];
+    }
+};
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, q;
+    cin >> n >> q;
+    ArbolXor arbol(n);
+    for (int i = 1; i <= n; ++i) {
+        cin >> arbol.valor[i];
+    }
+    for (int i = 0; i < n - 1; ++i) {
+        int u, v;
+        cin >> u >> v;
+        arbol.arista(u, v);
+    }
+    arbol.preparar();
 
     while (q--) {
         int u, v;
         cin >> u >> v;
-        int w = lca(u, v);
-        int ans = pxor[u] ^ pxor[v] ^ a[w];
-        cout << ans << "\n";
+        cout << arbol.xor_camino(u, v) << "\n";
     }
     return 0;
 }

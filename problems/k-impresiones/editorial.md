@@ -29,41 +29,54 @@ Simular segundo a segundo. O `int` en `hi`. O `lo=0` y $k\ge 1$ (en $T=0$ hay $0
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
 
+bool alcanza(long long tiempo, const vector<long long>& velocidades, long long k) {
+    long long hechas = 0;
+    for (long long v : velocidades) {
+        hechas += tiempo / v;
+        if (hechas >= k) {
+            return true;
+        }
+    }
+    return false;
+}
+
+long long minimo_tiempo(const vector<long long>& velocidades, long long k) {
+    long long menor = *min_element(velocidades.begin(), velocidades.end());
+    long long lo = 1;
+    long long hi = menor * k;
+    long long respuesta = hi;
+
+    while (lo <= hi) {
+        long long mid = lo + (hi - lo) / 2;
+        if (alcanza(mid, velocidades, k)) {
+            respuesta = mid;
+            hi = mid - 1;
+        } else {
+            lo = mid + 1;
+        }
+    }
+    return respuesta;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+
     int n;
     long long k;
     cin >> n >> k;
-    vector<long long> t(n);
-    long long mn = (1LL << 62);
+    vector<long long> velocidades(n);
     for (int i = 0; i < n; ++i) {
-        cin >> t[i];
-        mn = min(mn, t[i]);
+        cin >> velocidades[i];
     }
-    auto ok = [&](long long mid) {
-        long long done = 0;
-        for (long long x : t) {
-            done += mid / x;
-            if (done >= k) return true;
-        }
-        return false;
-    };
-    long long lo = 1, hi = mn * k, ans = hi;
-    while (lo <= hi) {
-        long long mid = lo + (hi - lo) / 2;
-        if (ok(mid)) {
-            ans = mid;
-            hi = mid - 1;
-        } else lo = mid + 1;
-    }
-    cout << ans << "\n";
+
+    cout << minimo_tiempo(velocidades, k) << "\n";
     return 0;
 }
 ```

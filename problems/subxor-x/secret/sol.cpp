@@ -1,22 +1,35 @@
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
+
+long long contar_subxor(const vector<int>& a, int objetivo) {
+    unordered_map<int, int> freq;
+    freq.reserve((int)a.size() * 2);
+    freq[0] = 1;
+
+    int prefijo = 0;
+    long long respuesta = 0;
+    for (int x : a) {
+        prefijo ^= x;
+        auto it = freq.find(prefijo ^ objetivo);
+        if (it != freq.end()) {
+            respuesta += it->second;
+        }
+        freq[prefijo]++;
+    }
+    return respuesta;
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int n; int X; cin>>n>>X;
-    unordered_map<int,int> f;
-    f.reserve(n*2);
-    f[0]=1;
-    int p=0; ll ans=0;
-    for (int i=0;i<n;++i) {
-        int a; cin>>a;
-        p ^= a;
-        auto it=f.find(p^X);
-        if (it!=f.end()) ans += it->second;
-        f[p]++;
+
+    int n, objetivo;
+    cin >> n >> objetivo;
+    vector<int> a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-    cout << ans << "\n";
+
+    cout << contar_subxor(a, objetivo) << "\n";
     return 0;
 }

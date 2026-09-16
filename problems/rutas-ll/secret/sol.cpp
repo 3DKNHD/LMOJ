@@ -1,35 +1,49 @@
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
 
-const ll INF = 1LL << 62;
+const long long INF = 1LL << 62;
+
+long long dijkstra(int n, const vector<vector<pair<int, long long>>>& g, int origen, int destino) {
+    vector<long long> dist(n + 1, INF);
+    priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<>> pq;
+    dist[origen] = 0;
+    pq.push({0, origen});
+
+    while (!pq.empty()) {
+        auto [du, u] = pq.top();
+        pq.pop();
+        if (du != dist[u]) {
+            continue;
+        }
+        for (auto [v, w] : g[u]) {
+            if (dist[v] > du + w) {
+                dist[v] = du + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+
+    if (dist[destino] >= INF / 2) {
+        return -1;
+    }
+    return dist[destino];
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+
     int n, m, s, t;
     cin >> n >> m >> s >> t;
-    vector<vector<pair<int, ll>>> g(n + 1);
+    vector<vector<pair<int, long long>>> g(n + 1);
     for (int i = 0; i < m; ++i) {
-        int u, v; ll w;
+        int u, v;
+        long long w;
         cin >> u >> v >> w;
         g[u].push_back({v, w});
         g[v].push_back({u, w});
     }
-    vector<ll> d(n + 1, INF);
-    priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<>> pq;
-    d[s] = 0;
-    pq.push({0, s});
-    while (!pq.empty()) {
-        auto [du, u] = pq.top();
-        pq.pop();
-        if (du != d[u]) continue;
-        for (auto [v, w] : g[u])
-            if (d[v] > du + w) {
-                d[v] = du + w;
-                pq.push({d[v], v});
-            }
-    }
-    cout << (d[t] >= INF / 2 ? -1 : d[t]) << "\n";
+
+    cout << dijkstra(n, g, s, t) << "\n";
     return 0;
 }

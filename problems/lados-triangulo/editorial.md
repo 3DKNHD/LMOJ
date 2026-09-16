@@ -38,22 +38,26 @@ Si ordenas para que $a\le b\le c$, alcanza con comprobar $a+b>c$. Las otras dos 
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
 
+bool forman_triangulo(long long a, long long b, long long c) {
+    return a + b > c && a + c > b && b + c > a;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T;
-    cin >> T;
-    while (T--) {
+
+    int casos;
+    cin >> casos;
+    while (casos--) {
         long long a, b, c;
         cin >> a >> b >> c;
-        bool ok = a + b > c && a + c > b && b + c > a;
-        cout << (ok ? "SI" : "NO") << "\n";
+        cout << (forman_triangulo(a, b, c) ? "SI" : "NO") << "\n";
     }
     return 0;
 }

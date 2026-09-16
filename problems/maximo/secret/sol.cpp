@@ -1,18 +1,27 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+long long maximo(const vector<long long>& a) {
+    long long mejor = a[0];
+    for (int i = 1; i < (int)a.size(); ++i) {
+        if (a[i] > mejor) {
+            mejor = a[i];
+        }
+    }
+    return mejor;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+
     int n;
     cin >> n;
-    long long best;
-    cin >> best;
-    for (int i = 1; i < n; ++i) {
-        long long x;
-        cin >> x;
-        if (x > best) best = x;
+    vector<long long> a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-    cout << best << "\n";
+
+    cout << maximo(a) << "\n";
     return 0;
 }

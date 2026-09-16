@@ -29,25 +29,40 @@ Loop hacia atrás (cada moneda una vez). O no imprimir `-1`.
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
+
+const int INF = 1e9;
+
+int min_monedas(const vector<int>& monedas, int objetivo) {
+    vector<int> dp(objetivo + 1, INF);
+    dp[0] = 0;
+    for (int moneda : monedas) {
+        for (int s = moneda; s <= objetivo; ++s) {
+            dp[s] = min(dp[s], dp[s - moneda] + 1);
+        }
+    }
+    if (dp[objetivo] >= INF) {
+        return -1;
+    }
+    return dp[objetivo];
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int n,S; cin>>n>>S;
-    vector<int> c(n);
-    for (int i=0;i<n;++i) cin>>c[i];
-    const int INF=1e9;
-    vector<int> dp(S+1, INF);
-    dp[0]=0;
-    for (int x: c)
-        for (int j=x;j<=S;++j) dp[j]=min(dp[j], dp[j-x]+1);
-    cout << (dp[S]>=INF ? -1 : dp[S]) << "\n";
+
+    int n, objetivo;
+    cin >> n >> objetivo;
+    vector<int> monedas(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> monedas[i];
+    }
+
+    cout << min_monedas(monedas, objetivo) << "\n";
     return 0;
 }
 ```

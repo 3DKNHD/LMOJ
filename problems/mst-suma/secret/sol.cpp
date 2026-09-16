@@ -1,29 +1,80 @@
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
+
+struct Arista {
+    int u;
+    int v;
+    long long peso;
+};
 
 struct DSU {
-    vector<int> p, r;
-    DSU(int n): p(n+1), r(n+1,0) { iota(p.begin(), p.end(), 0); }
-    int find(int x) { return p[x]==x ? x : p[x]=find(p[x]); }
-    bool unite(int a, int b) {
-        a=find(a); b=find(b); if (a==b) return false;
-        if (r[a]<r[b]) swap(a,b);
-        p[b]=a; if (r[a]==r[b]) ++r[a];
+    vector<int> padre;
+    vector<int> rango;
+
+    DSU(int tam) : padre(tam + 1), rango(tam + 1, 0) {
+        iota(padre.begin(), padre.end(), 0);
+    }
+
+    int raiz(int x) {
+        if (padre[x] == x) {
+            return x;
+        }
+        return padre[x] = raiz(padre[x]);
+    }
+
+    bool unir(int a, int b) {
+        a = raiz(a);
+        b = raiz(b);
+        if (a == b) {
+            return false;
+        }
+        if (rango[a] < rango[b]) {
+            swap(a, b);
+        }
+        padre[b] = a;
+        if (rango[a] == rango[b]) {
+            ++rango[a];
+        }
         return true;
     }
 };
+
+long long kruskal(int n, vector<Arista> aristas) {
+    sort(aristas.begin(), aristas.end(), [](const Arista& a, const Arista& b) {
+        return a.peso < b.peso;
+    });
+
+    DSU dsu(n);
+    long long costo = 0;
+    int usadas = 0;
+    for (const auto& e : aristas) {
+        if (dsu.unir(e.u, e.v)) {
+            costo += e.peso;
+            ++usadas;
+        }
+    }
+    if (usadas != n - 1) {
+        return -1;
+    }
+    return costo;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int n, m; cin >> n >> m;
-    vector<array<ll,3>> e(m);
-    for (int i=0;i<m;++i) cin >> e[i][1] >> e[i][2] >> e[i][0];
-    sort(e.begin(), e.end());
-    DSU d(n);
-    ll cost=0; int used=0;
-    for (auto &t: e) if (d.unite((int)t[1], (int)t[2])) { cost += t[0]; ++used; }
-    if (used != n-1) cout << "IMPOSIBLE\n";
-    else cout << cost << "\n";
+
+    int n, m;
+    cin >> n >> m;
+    vector<Arista> aristas(m);
+    for (int i = 0; i < m; ++i) {
+        cin >> aristas[i].u >> aristas[i].v >> aristas[i].peso;
+    }
+
+    long long costo = kruskal(n, aristas);
+    if (costo < 0) {
+        cout << "IMPOSIBLE\n";
+    } else {
+        cout << costo << "\n";
+    }
     return 0;
 }

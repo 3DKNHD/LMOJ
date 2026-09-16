@@ -46,7 +46,7 @@ Si haces `r * a` sin `%`, el producto de dos números de mil millones no cabe en
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -54,27 +54,29 @@ using namespace std;
 
 const long long MOD = 1000000007LL;
 
-long long binpow(long long a, long long b) {
-    a %= MOD;
-    if (a < 0) a += MOD;
-    long long r = 1;
-    while (b > 0) {
-        if (b & 1) r = r * a % MOD;
-        a = a * a % MOD;
-        b >>= 1;
+long long potencia(long long base, long long exp) {
+    base %= MOD;
+    long long resultado = 1;
+    while (exp > 0) {
+        if (exp & 1) {
+            resultado = resultado * base % MOD;
+        }
+        base = base * base % MOD;
+        exp >>= 1;
     }
-    return r;
+    return resultado;
 }
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T;
-    cin >> T;
-    while (T--) {
+
+    int casos;
+    cin >> casos;
+    while (casos--) {
         long long a, b;
         cin >> a >> b;
-        cout << binpow(a, b) << "\n";
+        cout << potencia(a, b) << "\n";
     }
     return 0;
 }

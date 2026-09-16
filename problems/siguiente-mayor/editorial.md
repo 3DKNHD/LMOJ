@@ -32,31 +32,51 @@ Pusiste $\ge$ y no encuentras nada estrictamente mayor. O imprimiste índices.
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
+
+vector<long long> siguiente_mayor(const vector<long long>& a) {
+    int n = (int)a.size();
+    vector<long long> respuesta(n, -1);
+    vector<int> pila;
+
+    for (int i = n - 1; i >= 0; --i) {
+        while (!pila.empty() && a[pila.back()] <= a[i]) {
+            pila.pop_back();
+        }
+        if (!pila.empty()) {
+            respuesta[i] = a[pila.back()];
+        }
+        pila.push_back(i);
+    }
+    return respuesta;
+}
+
+void imprimir(const vector<long long>& a) {
+    for (int i = 0; i < (int)a.size(); ++i) {
+        if (i) {
+            cout << " ";
+        }
+        cout << a[i];
+    }
+    cout << "\n";
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int n; cin>>n;
-    vector<ll> a(n);
-    for (int i=0;i<n;++i) cin>>a[i];
-    vector<int> ans(n, -1);
-    vector<int> st;
-    for (int i=n-1;i>=0;--i) {
-        while (!st.empty() && a[st.back()]<=a[i]) st.pop_back();
-        if (!st.empty()) ans[i]=a[st.back()];
-        st.push_back(i);
+
+    int n;
+    cin >> n;
+    vector<long long> a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-    for (int i=0;i<n;++i) {
-        if (i) cout<<" ";
-        cout<<ans[i];
-    }
-    cout<<"\n";
+
+    imprimir(siguiente_mayor(a));
     return 0;
 }
 ```

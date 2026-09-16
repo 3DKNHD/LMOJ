@@ -39,29 +39,45 @@ Ordenaste por inicio. O usaste `>=` y metiste dos que se tocan en $t$.
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
 
+struct Intervalo {
+    int inicio;
+    int fin;
+};
+
+int maximo_sin_solape(vector<Intervalo> intervalos) {
+    sort(intervalos.begin(), intervalos.end(), [](const Intervalo& a, const Intervalo& b) {
+        return a.fin < b.fin;
+    });
+
+    int tomados = 0;
+    long long ultimo_fin = -(1LL << 60);
+    for (const auto& it : intervalos) {
+        if (it.inicio > ultimo_fin) {
+            ++tomados;
+            ultimo_fin = it.fin;
+        }
+    }
+    return tomados;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+
     int n;
     cin >> n;
-    vector<pair<int, int>> a(n);
-    for (int i = 0; i < n; ++i) cin >> a[i].second >> a[i].first;
-    sort(a.begin(), a.end());
-    int ans = 0;
-    long long last = -(1LL << 60);
-    for (auto [r, l] : a) {
-        if (l > last) {
-            ++ans;
-            last = r;
-        }
+    vector<Intervalo> intervalos(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> intervalos[i].inicio >> intervalos[i].fin;
     }
-    cout << ans << "\n";
+
+    cout << maximo_sin_solape(intervalos) << "\n";
     return 0;
 }
 ```

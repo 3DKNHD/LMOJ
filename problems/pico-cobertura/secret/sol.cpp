@@ -1,23 +1,33 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int cobertura_maxima(int limite, const vector<pair<int, int>>& rangos) {
+    vector<int> delta(limite + 2, 0);
+    for (auto [izq, der] : rangos) {
+        delta[izq] += 1;
+        delta[der + 1] -= 1;
+    }
+
+    int actual = 0;
+    int mejor = 0;
+    for (int i = 1; i <= limite; ++i) {
+        actual += delta[i];
+        mejor = max(mejor, actual);
+    }
+    return mejor;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int n, M;
-    cin >> n >> M;
-    vector<int> d(M + 2, 0);
+
+    int n, limite;
+    cin >> n >> limite;
+    vector<pair<int, int>> rangos(n);
     for (int i = 0; i < n; ++i) {
-        int L, R;
-        cin >> L >> R;
-        d[L] += 1;
-        d[R + 1] -= 1;
+        cin >> rangos[i].first >> rangos[i].second;
     }
-    int cur = 0, ans = 0;
-    for (int i = 1; i <= M; ++i) {
-        cur += d[i];
-        if (cur > ans) ans = cur;
-    }
-    cout << ans << "\n";
+
+    cout << cobertura_maxima(limite, rangos) << "\n";
     return 0;
 }

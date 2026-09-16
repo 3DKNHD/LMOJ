@@ -65,21 +65,26 @@ Eso le dice a C++ que no se sincronice con `scanf` en cada número.
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
 
+long long suma(long long a, long long b) {
+    return a + b;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T;
-    cin >> T;
-    while (T--) {
+
+    int casos;
+    cin >> casos;
+    while (casos--) {
         long long a, b;
         cin >> a >> b;
-        cout << a + b << "\n";
+        cout << suma(a, b) << "\n";
     }
     return 0;
 }

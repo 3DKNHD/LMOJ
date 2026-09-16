@@ -44,31 +44,45 @@ Respuesta: $4$.
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
 
+const long long MENOS_INF = -(1LL << 60);
+
+long long segundo_maximo_estricto(const vector<long long>& a) {
+    long long primero = MENOS_INF;
+    long long segundo = MENOS_INF;
+
+    for (long long x : a) {
+        if (x > primero) {
+            segundo = primero;
+            primero = x;
+        } else if (x < primero && x > segundo) {
+            segundo = x;
+        }
+    }
+
+    if (segundo == MENOS_INF) {
+        return -1;
+    }
+    return segundo;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+
     int n;
     cin >> n;
-    const long long NEG = -(1LL << 60);
-    long long m1 = NEG, m2 = NEG;
+    vector<long long> a(n);
     for (int i = 0; i < n; ++i) {
-        long long x;
-        cin >> x;
-        if (x > m1) {
-            m2 = m1;
-            m1 = x;
-        } else if (x < m1 && x > m2) {
-            m2 = x;
-        }
+        cin >> a[i];
     }
-    if (m2 == NEG) cout << -1 << "\n";
-    else cout << m2 << "\n";
+
+    cout << segundo_maximo_estricto(a) << "\n";
     return 0;
 }
 ```

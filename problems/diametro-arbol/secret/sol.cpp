@@ -1,30 +1,50 @@
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
 
-int n;
-vector<vector<int>> g;
-pair<int,int> farthest(int src) {
-    vector<int> d(n+1, -1);
-    queue<int> q; q.push(src); d[src]=0;
-    int best=src;
+pair<int, int> mas_lejano(int origen, const vector<vector<int>>& g) {
+    int n = (int)g.size() - 1;
+    vector<int> dist(n + 1, -1);
+    queue<int> q;
+    q.push(origen);
+    dist[origen] = 0;
+    int mejor = origen;
+
     while (!q.empty()) {
-        int u=q.front(); q.pop();
-        if (d[u]>d[best]) best=u;
-        for (int v: g[u]) if (d[v]==-1) { d[v]=d[u]+1; q.push(v); }
+        int u = q.front();
+        q.pop();
+        if (dist[u] > dist[mejor]) {
+            mejor = u;
+        }
+        for (int v : g[u]) {
+            if (dist[v] != -1) {
+                continue;
+            }
+            dist[v] = dist[u] + 1;
+            q.push(v);
+        }
     }
-    return {best, d[best]};
+    return {mejor, dist[mejor]};
 }
+
+int diametro(const vector<vector<int>>& g) {
+    int extremo = mas_lejano(1, g).first;
+    return mas_lejano(extremo, g).second;
+}
+
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+
+    int n;
     cin >> n;
-    g.assign(n+1, {});
-    for (int i=0;i<n-1;++i) {
-        int u,v; cin>>u>>v;
-        g[u].push_back(v); g[v].push_back(u);
+    vector<vector<int>> g(n + 1);
+    for (int i = 0; i < n - 1; ++i) {
+        int u, v;
+        cin >> u >> v;
+        g[u].push_back(v);
+        g[v].push_back(u);
     }
-    int u = farthest(1).first;
-    cout << farthest(u).second << "\n";
+
+    cout << diametro(g) << "\n";
     return 0;
 }

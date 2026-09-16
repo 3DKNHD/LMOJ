@@ -33,24 +33,34 @@ Si imprimes un espacio **después** de cada número, te queda un espacio de más
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    int n;
-    cin >> n;
-    vector<long long> a(n);
-    for (int i = 0; i < n; ++i) cin >> a[i];
-    for (int i = n - 1; i >= 0; --i) {
-        if (i + 1 != n) cout << " ";
+void imprimir_reverso(const vector<long long>& a) {
+    for (int i = (int)a.size() - 1; i >= 0; --i) {
+        if (i + 1 != (int)a.size()) {
+            cout << " ";
+        }
         cout << a[i];
     }
     cout << "\n";
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    vector<long long> a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+    }
+
+    imprimir_reverso(a);
     return 0;
 }
 ```

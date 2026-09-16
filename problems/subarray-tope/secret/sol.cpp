@@ -1,19 +1,34 @@
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
+
+int ventana_mas_larga(const vector<long long>& a, long long tope) {
+    int mejor = 0;
+    int izq = 0;
+    long long suma = 0;
+
+    for (int der = 0; der < (int)a.size(); ++der) {
+        suma += a[der];
+        while (izq <= der && suma > tope) {
+            suma -= a[izq];
+            ++izq;
+        }
+        mejor = max(mejor, der - izq + 1);
+    }
+    return mejor;
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int n; ll S; cin>>n>>S;
-    vector<ll> a(n);
-    for (int i=0;i<n;++i) cin>>a[i];
-    int ans=0, L=0; ll sum=0;
-    for (int R=0;R<n;++R) {
-        sum += a[R];
-        while (L<=R && sum>S) { sum -= a[L]; ++L; }
-        ans = max(ans, R-L+1);
+
+    int n;
+    long long tope;
+    cin >> n >> tope;
+    vector<long long> a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-    cout << ans << "\n";
+
+    cout << ventana_mas_larga(a, tope) << "\n";
     return 0;
 }

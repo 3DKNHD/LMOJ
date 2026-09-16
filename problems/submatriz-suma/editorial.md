@@ -32,26 +32,46 @@ Signos dados vuelta. O `int`. O índices desde $0$ mezclados con el enunciado qu
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
+
+vector<vector<long long>> prefijo_2d(const vector<vector<long long>>& a) {
+    int filas = (int)a.size();
+    int cols = (int)a[0].size();
+    vector<vector<long long>> p(filas + 1, vector<long long>(cols + 1, 0));
+    for (int i = 1; i <= filas; ++i) {
+        for (int j = 1; j <= cols; ++j) {
+            p[i][j] = a[i - 1][j - 1] + p[i - 1][j] + p[i][j - 1] - p[i - 1][j - 1];
+        }
+    }
+    return p;
+}
+
+long long suma_submatriz(const vector<vector<long long>>& p, int r1, int c1, int r2, int c2) {
+    return p[r2][c2] - p[r1 - 1][c2] - p[r2][c1 - 1] + p[r1 - 1][c1 - 1];
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int n,m,q; cin>>n>>m>>q;
-    vector<vector<ll>> p(n+1, vector<ll>(m+1,0));
-    for (int i=1;i<=n;++i)
-        for (int j=1;j<=m;++j) {
-            ll x; cin>>x;
-            p[i][j]=x+p[i-1][j]+p[i][j-1]-p[i-1][j-1];
+
+    int n, m, consultas;
+    cin >> n >> m >> consultas;
+    vector<vector<long long>> a(n, vector<long long>(m));
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            cin >> a[i][j];
         }
-    while (q--) {
-        int r1,c1,r2,c2; cin>>r1>>c1>>r2>>c2;
-        cout << p[r2][c2]-p[r1-1][c2]-p[r2][c1-1]+p[r1-1][c1-1] << "\n";
+    }
+
+    vector<vector<long long>> p = prefijo_2d(a);
+    while (consultas--) {
+        int r1, c1, r2, c2;
+        cin >> r1 >> c1 >> r2 >> c2;
+        cout << suma_submatriz(p, r1, c1, r2, c2) << "\n";
     }
     return 0;
 }

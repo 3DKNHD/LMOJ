@@ -32,25 +32,39 @@ Loop creciente (unbounded). `int` en `dp`.
 
 ## El código que pasa (C++)
 
-Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
+Analízalo y entiéndelo. No lo copies y pegues.
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
+
+struct Objeto {
+    int peso;
+    long long valor;
+};
+
+long long mochila(int capacidad, const vector<Objeto>& objetos) {
+    vector<long long> dp(capacidad + 1, 0);
+    for (const auto& obj : objetos) {
+        for (int w = capacidad; w >= obj.peso; --w) {
+            dp[w] = max(dp[w], dp[w - obj.peso] + obj.valor);
+        }
+    }
+    return dp[capacidad];
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int n, W;
-    cin >> n >> W;
-    vector<ll> dp(W + 1, 0);
+
+    int n, capacidad;
+    cin >> n >> capacidad;
+    vector<Objeto> objetos(n);
     for (int i = 0; i < n; ++i) {
-        int w; ll v;
-        cin >> w >> v;
-        for (int j = W; j >= w; --j) dp[j] = max(dp[j], dp[j - w] + v);
+        cin >> objetos[i].peso >> objetos[i].valor;
     }
-    cout << dp[W] << "\n";
+
+    cout << mochila(capacidad, objetos) << "\n";
     return 0;
 }
 ```

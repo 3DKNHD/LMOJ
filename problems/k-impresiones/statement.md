@@ -1,8 +1,10 @@
-# K impresiones
+# Las copias
 
-Hay $n$ impresoras. La $i$-ésima saca **una** copia cada $t_i$ segundos (en el segundo $t_i$, $2t_i$, $3t_i$, …). ¿Cuál es el mínimo tiempo $T$ para tener al menos $k$ copias en total?
+Hay que sacar $k$ copias del reglamento y hay $n$ impresoras independientes. La $i$-ésima es constante como un metrónomo: produce **una** copia exactamente en los segundos $t_i$, $2t_i$, $3t_i$, … y en ningún otro instante. En el segundo $0$ no ha salido nada.
 
-Busca $T$ por búsqueda binaria. Ojo con overflow: $t_i$ y $k$ llegan a $10^9$.
+Las impresoras trabajan a la vez. En un segundo $T$, el total de copias listas es, para cada impresora, cuántos múltiplos de $t_i$ hay que no superan $T$, y eso sumado.
+
+¿Cuál es el menor tiempo $T$ en el que ya hay **al menos** $k$ copias? $k$ y los $t_i$ pueden ser grandes.
 
 ## Entrada
 

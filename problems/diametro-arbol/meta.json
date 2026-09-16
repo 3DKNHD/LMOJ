@@ -1,6 +1,6 @@
 {
   "code": "diametro-arbol",
-  "name": "Diámetro del árbol",
+  "name": "Los dos pueblos más lejanos",
   "points": 8,
   "timeLimit": 2.0,
   "memoryLimit": 256,

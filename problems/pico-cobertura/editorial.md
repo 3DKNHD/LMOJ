@@ -1,64 +1,42 @@
-# Editorial: Pico de cobertura
+# Editorial: Hora pico
 
-## Qué pide
+## Qué hay que hacer
 
-$n$ intervalos cerrados $[L,R]$ sobre la línea $1..M$. Máximo número de intervalos que cubren **el mismo** instante. $M \le 10^6$, $n \le 2\cdot 10^5$.
+Cada persona está en la fila desde el minuto $L$ hasta el $R$ inclusive. Quieres el minuto con **más gente a la vez**.
 
-## Idea
+## No simules persona por persona
 
-Arreglo de diferencia. Quieres el máximo de la función
+$M$ llega a $10^6$ y $n$ a $2\cdot 10^5$. Si por cada persona recorres $L..R$ sumando $1$ en un arreglo, puedes llegar a $n\cdot M$ y no entra en tiempo.
 
-$$
-c(x) = \#\{ i : L_i \le x \le R_i \}
-$$
+## Arreglo de diferencia (entradas y salidas)
 
-En vez de pintar cada intervalo (eso sería $O(nM)$), marcas bordes:
+Piensa un arreglo `d[1..M]`. Cuando alguien **entra** en $L$, $d[L] += 1$. Cuando **se va después de $R$**, en el minuto $R+1$ hay uno menos: $d[R+1] -= 1$.
 
-```text
-d[L]   += 1    // a partir de L hay uno más
-d[R+1] -= 1    // al salir de R deja de contar
+Después caminas los minutos $1..M$ llevando $cur$ = gente ahora:
+
+```
+cur += d[i]
+ans = max(ans, cur)
 ```
 
-Luego un prefijo:
+`cur` es la suma de todos los $+1$ y $-1$ hasta $i$: o sea, cuántos intervalos cubren el minuto $i$.
 
-$$
-c(1) = d[1],\qquad c(x) = c(x-1) + d[x]
-$$
+## Ejemplo
 
-El máximo de $c(x)$ en $1..M$ es la respuesta.
+$M=5$, intervalos $[1,3]$ y $[3,5]$.
 
-## Por qué $R+1$ y no $R$
+- `d[1]+=1`, `d[4]-=1`
+- `d[3]+=1`, `d[6]-=1`
 
-El intervalo es cerrado. En $R$ todavía cubres. El $-1$ tiene que actuar en el **siguiente** entero. Si haces `d[R] -= 1`, el punto $R$ queda descubierto de más: WA.
+Minutos: $1$ → cur $1$; $2$ → $1$; $3$ → $2$; $4$ → $1$; $5$ → $1$. Máximo $2$ (el minuto $3$).
 
-`d` necesita índice $M+1$, por eso el vector es `M+2`.
+## Si te da WA
 
-## Por qué cabe
+Pusiste `-1` en $R$ en vez de $R+1$ y el último minuto no cuenta. O el arreglo no llega a $M+1$.
 
-Memoria $O(M)$. Tiempo $O(n+M)$: $n$ actualizaciones $O(1)$ y un barrido de $M$. No hay que comprimir coordenadas porque $M \le 10^6$.
+## El código que pasa (C++)
 
-Si $M$ fuera $10^9$, comprimirías los $L$ y $R+1$ y barrerías eventos ordenados (sweep). Aquí no hace falta.
-
-## Relación con “sesiones sin choque”
-
-Ahí querías un **subconjunto sin solapes**. Aquí quieres el **máximo solape**. Son duales: greedy vs diferencia. No mezclar las ideas.
-
-## Complejidad
-
-$O(n+M)$ tiempo, $O(M)$ memoria.
-
-## Otras soluciones
-
-- Sweep: eventos $(L, +1)$ y $(R+1, -1)$, ordenas, recorres. $O(n \log n)$, útil si $M$ es enorme.
-- Segment tree con lazy: overkill.
-
-## Trampas
-
-- `d[R] -= 1` en vez de `d[R+1]`.
-- Barrer hasta $M$ pero el vector corto (acceso `d[M+1]` fuera).
-- Confundir con el greedy de intervalos independientes.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -82,5 +60,6 @@ int main() {
         if (cur > ans) ans = cur;
     }
     cout << ans << "\n";
+    return 0;
 }
 ```

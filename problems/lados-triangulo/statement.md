@@ -1,8 +1,8 @@
-# ¿Forman triángulo?
+# Tres varillas
 
-Tienes $T$ tripletas de longitudes. Para cada una, decide si pueden ser los lados de un **triángulo no degenerado**: las tres desigualdades estrictas $a+b > c$, $a+c > b$ y $b+c > a$.
+En el taller de escenografía hay cajas con tres varillas. Cada caja trae longitudes $a$, $b$ y $c$ (enteros positivos). Quieren saber si, juntando los extremos, se puede armar un **triángulo de verdad**: uno con área positiva, no tres palos tirados en una misma línea.
 
-Suma con 64 bits: $a$ y $b$ pueden ser $10^9$.
+Hay $T$ cajas. Para cada una responde `SI` o `NO` (mayúsculas, sin tilde). Las varillas pueden ser largas; ten cuidado al sumar.
 
 ## Entrada
 

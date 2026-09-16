@@ -1,6 +1,6 @@
 {
   "code": "mst-suma",
-  "name": "Red mínima",
+  "name": "Cablear el campus",
   "points": 8,
   "timeLimit": 2.0,
   "memoryLimit": 256,

@@ -1,52 +1,65 @@
-# Editorial: Combinatoria módulo
+# Editorial: El jurado
 
-## Qué pide
+## Qué hay que hacer
 
-$T\le 10^5$ veces $C(n,k)\bmod 10^9+7$, $n,k\le 10^6$. $C(n,k)=0$ si $k>n$. $C(0,0)=1$.
-
-## Idea
+$C(n,k)$ = de $n$ personas, cuántos jurados de $k$. Fórmula:
 
 $$
-C(n,k) = \frac{n!}{k!(n-k)!}
+C(n,k) = \frac{n!}{k!\,(n-k)!}
 $$
 
-Módulo primo $M=10^9+7$, el inverso de $k!$ existe. Precalcula:
+Módulo $10^9+7$ (un primo). Si $k>n$ o $k<0$, $0$. $C(0,0)=1$.
 
-- `fac[i] = i!`
-- `ifac[N] = (N!)^{-1}` con Fermat: `binpow(fac[N], M-2)`
-- `ifac[i-1] = ifac[i] * i` hacia atrás
+No puedes calcular el factorial y dividir en enteros normales: $1000000!$ tiene más dígitos que el universo.
 
-Query: `fac[n] * ifac[k] * ifac[n-k] % M` si $0\le k\le n$, else $0$.
+## Cómo “dividir” módulo un primo
 
-## Por qué no binpow por query para el inverso
+No se puede dividir en enteros y luego recortar. El inverso de $x$ es un $y$ tal que $x\cdot y$ deja resto $1$ al dividir por $p$. Entonces “dividir por $x$” es multiplicar por $y$.
 
-$T\cdot\log M$ de un inverso suelto entra, pero $k!$ distinto cada vez sin `ifac` sería lento o repetido. Un pase $O(N+\log M)$ y luego $O(1)$ por query es lo limpio.
+Si $p$ es primo, $y = x^{p-2} \bmod p$ (teorema de Fermat). Esa potencia se calcula igual que en “El sello”.
 
-## $C(0,0)$
+Precalculas **una vez**:
 
-`fac[0]=ifac[0]=1`. Fórmula da $1$.
+- `fac[i] = i! % MOD`
+- `ifac[N] = inverso de fac[N]`
+- `ifac[i-1] = ifac[i] * i % MOD` (para atrás)
 
-## Complejidad
+Consulta: `fac[n] * ifac[k] * ifac[n-k] % MOD`.
 
-$O(N + T)$. $N=10^6$.
+## Si te da TLE / WA
 
-## Otras soluciones
+Factorial por consulta. O `double`. O no hacer `%` en el producto de tres números.
 
-Lucas si $n$ fuera $\gg M$ (aquí $n < M$). Pascal $O(n^2)$: muerto.
+## El código que pasa (C++)
 
-## Trampas
-
-- Multiplicar sin `%` intermedio (`fac*ifac*ifac` puede $10^{27}$).
-- No tratar $k>n$.
-- Inverso de $0$ si alguien hace `ifac[k]` con $k>n$ sin el `if`.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-fac[0] = 1;
-for (int i = 1; i <= N; ++i) fac[i] = fac[i-1] * i % MOD;
-ifac[N] = binpow(fac[N], MOD - 2);
-for (int i = N; i >= 1; --i) ifac[i-1] = ifac[i] * i % MOD;
-// query:
-fac[n] * ifac[k] % MOD * ifac[n-k] % MOD
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+const ll MOD = 1000000007LL;
+ll binpow(ll a, ll e) {
+    ll r=1; a%=MOD;
+    while (e) { if (e&1) r=r*a%MOD; a=a*a%MOD; e>>=1; }
+    return r;
+}
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    const int N=1000000;
+    vector<ll> fac(N+1), ifac(N+1);
+    fac[0]=1;
+    for (int i=1;i<=N;++i) fac[i]=fac[i-1]*i%MOD;
+    ifac[N]=binpow(fac[N], MOD-2);
+    for (int i=N;i>=1;--i) ifac[i-1]=ifac[i]*i%MOD;
+    int T; cin>>T;
+    while (T--) {
+        int n,k; cin>>n>>k;
+        if (k<0 || k>n) cout<<"0\n";
+        else cout << fac[n]*ifac[k]%MOD*ifac[n-k]%MOD << "\n";
+    }
+    return 0;
+}
 ```

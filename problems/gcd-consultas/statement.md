@@ -1,15 +1,19 @@
-# GCD en rango
+# La medida común
 
-Arreglo estático. $q$ consultas $\gcd(a_L,\dots,a_R)$. Sparse table $O(1)$.
+El archivo de la biblioteca es una estantería de $n$ tomos. El tomo $i$ tiene $a_i$ páginas (siempre al menos una).
+
+La bibliotecaria hace $q$ preguntas. En cada una elige un tramo continuo de tomos, del $L$ al $R$ inclusive, y quiere el **mayor** número de páginas que divide a **todos** los tomos de ese tramo. En otras palabras, el máximo común divisor de $a_L, \dots, a_R$.
+
+Los tomos no se mueven entre preguntas.
 
 ## Entrada
 
-$n$ $q$ ($1 \le n,q \le 10^5$).
+La primera línea contiene $n$ y $q$ ($1 \le n,q \le 10^5$).
 
-$n$ enteros $a_i$ ($1 \le a_i \le 10^9$).
+La segunda línea contiene $n$ enteros $a_i$ ($1 \le a_i \le 10^9$).
 
-$q$ líneas $L$ $R$ ($1 \le L \le R \le n$).
+Siguen $q$ líneas con $L$ $R$ ($1 \le L \le R \le n$).
 
 ## Salida
 
-$q$ líneas.
+$q$ líneas, cada una con el gcd del rango pedido.

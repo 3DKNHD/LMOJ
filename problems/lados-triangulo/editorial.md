@@ -1,57 +1,44 @@
-# Editorial: ¿Forman triángulo?
+# Editorial: Tres varillas
 
-## Qué pide
+## Qué hay que hacer
 
-Para cada tripleta $a,b,c > 0$, si pueden ser lados de un **triángulo no degenerado**. Salida `SI` o `NO` (sin tilde, mayúsculas).
-
-## Idea
-
-La desigualdad del triángulo, **estricta** en los tres pares:
+Tres palos arman un triángulo de verdad (con área, no una línea) si **cada lado es más corto que la suma de los otros dos**. Las tres a la vez:
 
 $$
 a+b > c,\quad a+c > b,\quad b+c > a
 $$
 
-Si alguna es $\ge$ en vez de $>$ estás permitiendo área $0$ (degenerado: los tres puntos alineados). El enunciado lo prohíbe.
+Ojo: es $>$ estricto. Si $a+b=c$ los tres palos quedan en una línea: área $0$. El problema dice $NO$.
 
-## Por qué las tres
+## Paso a paso
 
-Si asumes $a \le b \le c$, basta $a+b > c$ (las otras dos se cumplen solas porque $c$ ya es el mayor). Eso es correcto **después de ordenar**. Si no ordenas, tienes que escribir las tres: un caso $1, 100, 1$ falla $1+1 > 100$ pero $1+100 > 1$ sí pasa.
+1. Lee $T$.
+2. $T$ veces: lees $a,b,c$. Si las tres desigualdades se cumplen, imprimes $SI$. Si no, `NO`.
+3. Exactamente esas letras, mayúsculas, sin tilde. No `Si`, no `YES`.
 
-Ordenar y chequear solo la mayor es una solución alternativa igual de válida.
+## Ejemplo
 
-## 64 bits en la suma
+- $3,4,5$: $3+4>5$, $3+5>4$, $4+5>3$ → $SI$
+- $1,2,3$: $1+2=3$, no es $>$ → $NO$
+- $1,100,1$: $1+1>100$ es falso → $NO$
 
-$a,b,c \le 10^9$, entonces $a+b \le 2 \cdot 10^9$, que **justo no cabe** en `int` con signo ($2^{31}-1 \approx 2.14 \cdot 10^9$… en realidad $2 \cdot 10^9$ **sí cabe** en `int` de 32 bits). $10^9+10^9 = 2 \cdot 10^9 < 2^{31}-1$, así que `int` no explota **en este límite**.
+## La trampa de la suma
 
-Aun así el oficial usa `long long` porque:
+$a$ y $b$ llegan a $10^9$, entonces $a+b$ llega a $2\cdot 10^9$. En `int` de 32 bits **justo entra**, pero no arriesgues: lee `long long`. No cuesta nada.
 
-- Es el hábito correcto cuando sumas cotas de $10^9$.
-- Si el límite subiera a $2 \cdot 10^9$, `int` sí muere.
+## Atajo
 
-Lee `long long` y compara `a + b > c` en 64 bits. No hay desbordamiento.
+Si ordenas para que $a\le b\le c$, alcanza con comprobar $a+b>c$. Las otras dos se cumplen solas. El oficial no ordena y escribe las tres. Las dos valen.
 
-## Degenerados que el juez va a meter
+## Si te da WA
 
-- $1,1,2$: $1+1 \not> 2$ → `NO` (es un segmento).
-- $5,5,5$: equilátero → `SI`.
-- $3,4,5$: pitagórico, área $> 0$ → `SI`.
+- Imprimiste `YES` / `Sí`.
+- Usaste $\ge$ y aceptaste triángulos planitos.
+- Solo comprobaste dos desigualdades.
 
-## Complejidad
+## El código que pasa (C++)
 
-$O(T)$ con $T \le 10^5$.
-
-## Otras soluciones
-
-Fórmula de Herón y exigir área $> 0$: inestable con enteros grandes si usas `double`. No lo hagas. La desigualdad es exacta.
-
-## Trampas
-
-- Imprimir `Sí` / `si` / `YES`. El juez quiere `SI` y `NO`.
-- Usar `>=` (acepta degenerados).
-- Chequear una sola desigualdad sin ordenar.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -68,5 +55,6 @@ int main() {
         bool ok = a + b > c && a + c > b && b + c > a;
         cout << (ok ? "SI" : "NO") << "\n";
     }
+    return 0;
 }
 ```

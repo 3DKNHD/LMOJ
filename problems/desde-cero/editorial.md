@@ -1,72 +1,51 @@
-# Editorial: Desde las cero
+# Editorial: El reloj del aula
 
-## Qué pide
+## Qué hay que hacer
 
-Un reloj 24 h que se reinicia cada $86400$ segundos ($24 \cdot 3600$). Para cada $t$ (segundos desde un origen, puede ser **muchos** días), imprime la hora que se ve: `HH:MM:SS` con dos dígitos siempre.
+El reloj tiene $24$ horas = $86400$ segundos y **se reinicia**. No le importa si pasaron $3$ días: muestra la hora **dentro del día actual**.
 
-## Idea
+Te dan $t$ segundos desde un origen (puede ser un número gigante). Quieres `HH:MM:SS` con **siempre dos dígitos** (`09` no `9`).
 
-El reloj solo ve la posición dentro del día actual:
+## Paso a paso
 
-$$
-t \leftarrow t \bmod 86400
-$$
+1. Quita los días enteros: $t \leftarrow t \bmod 86400$. Ahora $t$ está entre $0$ y $86399$.
+2. Horas: $H = t / 3600$ (división entera: $3661/3600=1$).
+3. Lo que sobra: $t \bmod 3600$. Minutos: eso $/ 60$.
+4. Segundos: lo que sobra al dividir por $60$.
+5. Imprime con ceros a la izquierda.
 
-Eso deja $t$ en $[0, 86399]$. Luego:
+## Ejemplo
 
-$$
-\begin{align*}
-H &= \lfloor t / 3600 \rfloor \\
-M &= \lfloor (t \bmod 3600) / 60 \rfloor \\
-S &= t \bmod 60
-\end{align*}
-$$
+$t = 3661$.
 
-## Por qué el módulo va primero
+- $3661 < 86400$, no da vueltas el día.
+- $H = 3661 / 3600 = 1$
+- resto $61$ → $M = 1$, $S = 1$
+- `01:01:01`
 
-Si $t = 10^{18}$, no puedes hacer `t / 3600` pensando en “hora absoluta” para imprimirla: esa hora no cabe en el reloj. El enunciado pide lo que **marca el reloj**, y el reloj vive en un ciclo de un día.
+$t = 86400$ → resto $0$ → `00:00:00`.
 
-$86400$ cabe en `int`, pero $t$ no: lee `long long` y haz `t %= 86400`. En C++ el módulo de un `long long` positivo con un `int` se promociona bien.
+$t = 10^{18}$: **primero** el módulo. Si haces $10^{18}/3600$ pensando en “hora absoluta” sale un resultado incorrecto y además no es lo que marca el reloj.
 
-$t \ge 0$, así que no hay módulo negativo.
-
-## Por qué dos dígitos
-
-`3:7:8` es WA. Tiene que ser `03:07:08`. En C++:
+## Ceros a la izquierda en C++
 
 ```cpp
-cout << setfill('0') << setw(2) << h << ":"
-     << setw(2) << m << ":"
-     << setw(2) << s << "\n";
+cout << setfill('0') << setw(2) << h << ":" << setw(2) << m << ":" << setw(2) << s << "\n";
 ```
 
-`setw` se gasta en el siguiente campo: por eso se repite. `setfill('0')` queda puesto.
+Hace falta `#include <iomanip>` (en `bits/stdc++.h` ya está).
 
-En Python: `f"{h:02d}:{m:02d}:{s:02d}"`.
+`t` es `long long`. `86400` entra en `int`, el módulo funciona.
 
-## Comprobación mental
+## Si te da WA
 
-- $t = 0$ → `00:00:00`
-- $t = 3661$ → $1$ h $1$ min $1$ s → `01:01:01`
-- $t = 86400$ → `00:00:00` (justo un día)
-- $t = 86399$ → `23:59:59`
+- No hiciste $t \bmod 86400$.
+- Imprimiste `1:1:1` sin ceros.
+- Usaste `int` para $t$ ($10^{18}$ no entra).
 
-## Complejidad
+## El código que pasa (C++)
 
-$O(T)$. Aritmética $O(1)$ por caso.
-
-## Otras soluciones
-
-Usar `std::chrono` es overkill. Restar $86400$ en un `while` con $t = 10^{18}$ es TLE infinito a efectos prácticos: **tiene** que ser módulo, no un bucle.
-
-## Trampas
-
-- Olvidar `t %= 86400`.
-- `int t` y perder $10^{18}$.
-- Un solo dígito (`9:0:0`).
-- Dividir mal: `t / 60` para minutos **del día** sin quitar las horas.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -88,5 +67,6 @@ int main() {
              << setw(2) << m << ":"
              << setw(2) << s << "\n";
     }
+    return 0;
 }
 ```

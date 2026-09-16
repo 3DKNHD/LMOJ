@@ -1,10 +1,13 @@
 {
   "code": "cuenta-div",
-  "name": "Cuántos divisores",
+  "name": "Reparto exacto",
   "points": 3,
   "timeLimit": 1.0,
   "memoryLimit": 256,
-  "tags": ["math", "criba"],
+  "tags": [
+    "math",
+    "criba"
+  ],
   "partial": false,
   "author": "LMOJ"
 }

@@ -1,6 +1,6 @@
 {
   "code": "gcd-consultas",
-  "name": "GCD en rango",
+  "name": "La medida común",
   "points": 6,
   "timeLimit": 1.5,
   "memoryLimit": 256,

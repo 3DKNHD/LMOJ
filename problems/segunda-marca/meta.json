@@ -1,10 +1,12 @@
 {
   "code": "segunda-marca",
-  "name": "Segunda marca",
+  "name": "La plata",
   "points": 1,
   "timeLimit": 1.0,
   "memoryLimit": 256,
-  "tags": ["implementación"],
+  "tags": [
+    "implementación"
+  ],
   "partial": false,
   "author": "LMOJ"
 }

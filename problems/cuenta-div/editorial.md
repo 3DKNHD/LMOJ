@@ -1,57 +1,37 @@
-# Editorial: Cuántos divisores
+# Editorial: Reparto exacto
 
-## Qué pide
+## Qué hay que hacer
 
-$T \le 10^5$ consultas: $d(n) = $ número de divisores positivos de $n$, $1 \le n \le 10^6$. $\sqrt{n}$ **por consulta** es $10^5 \cdot 10^3 = 10^8$ operaciones justas o TLE según implementación; la idea del pack es precalcular.
+Los divisores de $6$ son $1,2,3,6$: hay $4$. De un primo hay $2$ (el $1$ y él mismo). Del $1$ hay $1$.
 
-## Idea
+Te hacen $T$ preguntas, cada una un $n \le 10^6$. Si por cada $n$ recorres hasta $\sqrt{n}$, con $T=10^5$ te come el tiempo.
 
-Criba lineal de divisores. Para cada $i$, marcas múltiplos:
+## La idea (como la tabla del $2$, pero para todos)
 
-```text
-d[1..N] = 0
-para i = 1..N:
-    para j = i, 2i, 3i, ... ≤ N:
-        d[j]++
-```
+Arma un arreglo `d[1..1000000]` en $0$.
 
-Cada $i$ es un divisor de cada múltiplo $j$. Al terminar, `d[n]` es exactamente el número de divisores.
+Para cada $i = 1, 2, 3, \ldots, 10^6$:
+- Recorre los múltiplos $i, 2i, 3i, \ldots$ y a cada uno le sumas $1$ en $d$.
 
-## Complejidad del precompute
+¿Por qué funciona? Cada divisor $i$ de $n$ se anota exactamente cuando el `for` de $i$ pasa por $n$. Al final $d[n]$ es cuántos divisores tiene.
 
-El bucle interno corre $\lfloor N/1 \rfloor + \lfloor N/2 \rfloor + \cdots + \lfloor N/N \rfloor \approx N \ln N$. Con $N=10^6$, $\approx 1.4 \cdot 10^7$ operaciones. Una vez. Después cada query es $O(1)$.
+Esto se hace **una vez** al inicio. Después cada pregunta es `d[n]`: tiempo constante.
 
-## Por qué $1$ y los primos salen bien
+## ¿No es lento el doble for?
 
-- $1$: solo el múltiplo $j=1$ cuando $i=1$ → `d[1]=1`.
-- Primo $p$: lo tocan $i=1$ e $i=p$ → $2$ divisores.
+El `i=1` toca $10^6$ celdas, el $i=2$ toca $5\cdot 10^5$, etc. El total es $10^6 \cdot (1+1/2+1/3+\cdots) \approx 10^6 \cdot 14$, unos $14$ millones. Entra holgado.
 
-## SPF / factorizar
+## Ejemplo
 
-Otra vía: criba de menor primo (`spf`). Luego para cada $n$:
+$n=6$: lo tocan $i=1,2,3,6$ → $d[6]=4$.
 
-$$
-n = p_1^{e_1} \cdots p_k^{e_k} \implies d(n) = (e_1+1)\cdots(e_k+1)
-$$
+## Si te da TLE
 
-Precalculas `d[n]` con SPF en $O(N \log \log N)$ más un pase, o factorizas cada query en $O(\log n)$. También entra. El doble bucle de arriba es más corto.
+$\sqrt{n}$ por consulta. O criba mal escrita que hace $n^2$.
 
-## Complejidad total
+## El código que pasa (C++)
 
-$O(N \log N + T)$ tiempo, $O(N)$ memoria.
-
-## Otras soluciones
-
-- $\sqrt{n}$ por query: en C++ rápido a veces pasa, en Python no. El enunciado pide criba.
-- Factorizar sin SPF hasta $\sqrt{n}$ por query: mismo problema.
-
-## Trampas
-
-- `int n` y leer mal $T$.
-- Criba hasta $10^6$ pero olvidar `d[0]` o indexar en $0$.
-- Recalcular divisores de $n$ desde cero $T$ veces.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -71,5 +51,6 @@ int main() {
         cin >> n;
         cout << d[n] << "\n";
     }
+    return 0;
 }
 ```

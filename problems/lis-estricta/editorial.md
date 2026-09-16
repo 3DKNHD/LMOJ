@@ -1,48 +1,58 @@
-# Editorial: Subsecuencia creciente
+# Editorial: La colección creciente
 
-## Qué pide
+## Qué hay que hacer
 
-Longitud de la LIS **estricta**. $n=2\cdot 10^5$: $O(n^2)$ no entra.
+La subsecuencia creciente más larga, **estricta**, no tiene por qué ser contigua. $n=2\cdot 10^5$: $n^2$ no entra.
 
-## Idea
+## El arreglo `d`
 
-Patience sorting / `lower_bound`. Mantén `d` donde `d[k]` es el **menor** valor que puede terminar una LIS creciente de longitud $k+1`.
+`d[k]` = el **menor último valor** posible de una creciente de largo $k+1$ que viste.
 
-Para cada $x$:
+Por cada $x$:
 
-- `lower_bound(d, x)`: primer $\ge x$. Como quieres estricta, reemplazas esa posición (o append si $x$ es mayor que todos).
-- `upper_bound` sería LIS **no decreciente** ($\le$ permitido).
+- Busca el primer lugar en `d` que sea $\ge x$ (`lower_bound`).
+- Si no hay, $x$ alarga la colección: $d.push_back(x)$.
+- Si hay, **reemplazas** ese último valor por $x$ (queda un final más pequeño, más fácil de extender después).
 
-`d` queda ordenado. El tamaño de `d` es la LIS.
+`d.size()` al final es la respuesta. `d` **no** es la subsecuencia, solo su largo.
 
-`d` **no** es una LIS real, solo las colas. La longitud sí es correcta (clasificación clásica).
+Como es estricta, `lower_bound` ($\ge$) y no `upper_bound`. Si $x$ empata, reemplaza y no alarga.
 
-## Por qué `lower_bound` y no `upper_bound`
+## Ejemplo
 
-Estricta: $2,2$ no alarga. `lower_bound` encuentra el primer $2$ y lo pisa: longitud sigue $1$. `upper_bound` append-earía un segundo $2$: LIS no decreciente.
+$1, 3, 2$
 
-## Complejidad
+- $1$ → $d=[1]$
+- $3$ → $d=[1,3]$
+- $2$ reemplaza el $3$ → `d=[1,2]` largo $2$
 
-$O(n\log n)$.
+## Si te da TLE / WA
 
-## Fenwick / segment tree
+$n^2$. O subarreglo contiguo. O creciente no estricta ($<=$).
 
-Máximo de `dp` en valores $< x$, más compresión: $O(n\log n)$, reconstruye más fácil si piden la secuencia. Aquí solo la longitud.
+## El código que pasa (C++)
 
-## Trampas
-
-- `upper_bound` (acepta iguales).
-- DP $O(n^2)$.
-- Pensar que `d` es la subsecuencia (imprimir `d` como respuesta de valores estaría mal; el tamaño sí).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-vector<ll> d;
-for (ll x : a) {
-    auto it = lower_bound(d.begin(), d.end(), x);
-    if (it == d.end()) d.push_back(x);
-    else *it = x;
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n;
+    cin >> n;
+    vector<ll> d;
+    for (int i = 0; i < n; ++i) {
+        ll x;
+        cin >> x;
+        auto it = lower_bound(d.begin(), d.end(), x);
+        if (it == d.end()) d.push_back(x);
+        else *it = x;
+    }
+    cout << d.size() << "\n";
+    return 0;
 }
-cout << d.size() << "\n";
 ```

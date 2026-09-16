@@ -1,10 +1,13 @@
 {
   "code": "lados-triangulo",
-  "name": "¿Forman triángulo?",
+  "name": "Tres varillas",
   "points": 1,
   "timeLimit": 1.0,
   "memoryLimit": 256,
-  "tags": ["implementación", "geometría"],
+  "tags": [
+    "implementación",
+    "geometría"
+  ],
   "partial": false,
   "author": "LMOJ"
 }

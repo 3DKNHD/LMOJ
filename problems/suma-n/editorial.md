@@ -1,49 +1,43 @@
-# Editorial: Suma de la lista
+# Editorial: La colecta
 
-## Qué pide
+## Qué hay que hacer
 
-La suma $a_1 + \cdots + a_n$. Un solo número de salida.
+Te dan una lista de $n$ números. Los sumas todos. Imprime un solo número: el total.
 
-## Idea
+## Paso a paso
 
-Recorre el arreglo una vez y acumula. Complejidad $O(n)$, memoria $O(1)$ extra si no necesitas guardar el arreglo después (aunque guardarlo también cabe).
+1. Lee $n$.
+2. Crea una variable `s = 0` de tipo `long long`.
+3. Repite $n$ veces: lees un número y se lo sumas a $s$.
+4. Imprime `s`.
 
-## Por qué 64 bits (otra vez)
+No hace falta guardar la lista. Vas sumando al vuelo.
 
-$n \le 2 \cdot 10^5$ y cada $|a_i| \le 10^9$. El peor caso:
+## Ejemplo
 
-$$
-2 \cdot 10^5 \cdot 10^9 = 2 \cdot 10^{14}
-$$
+`n=4` y la lista `3 -1 10 0`.
 
-Eso **no cabe** en 32 bits. El acumulador tiene que ser `long long` (o `int` de Python).
+- empiezo en $0$
+- $+3 \to 3$
+- $-1 \to 2$
+- $+10 \to 12$
+- $+0 \to 12$
 
-Cuidado con este bug clásico:
+Respuesta: $12$.
 
-```cpp
-int n, x, s = 0;
-for (...) { cin >> x; s += x; }  // s se desborda
-```
+## Por qué `long long`
 
-Aunque `x` quepa en `int`, **la suma no**. Declara `long long s = 0`.
+Cada $a_i$ llega a $10^9$ y hay hasta $2\cdot 10^5$ números. El peor total es $2\cdot 10^5 \cdot 10^9 = 2\cdot 10^{14}$. Eso **no entra en `int`**. Entra en `long long`.
 
-Los $a_i$ también pueden ser negativos: la suma mínima es $-2 \cdot 10^{14}$, que sigue cabiendo en `long long`.
+Si usas `int`, en un caso grande el total se da vuelta y el juez te pone WA. En el sample chico te va a dar bien y puede parecer que está todo OK.
 
-## Por qué un solo pase alcanza
+## Si te da WA
 
-La suma es asociativa y conmutativa. No importa el orden. No hay que ordenar, no hay que usar fórmulas raras. Si haces dos pases (uno para leer, otro para sumar) también es $O(n)$ y está bien; solo no hagas $O(n^2)$.
+`int` en el acumulador. O te olvidaste de leer los $n$ números y sumaste basura.
 
-## Otras soluciones
+## El código que pasa (C++)
 
-- Recursión para “sumar el resto” es innecesaria y se come el stack con $n = 2 \cdot 10^5$.
-- `std::accumulate` es lo mismo que el bucle, siempre que el tipo inicial sea `0LL`.
-
-## Trampas
-
-- Acumulador `int`.
-- Leer mal: a veces ponen $n$ en la misma línea que los $a_i$. Aquí $n$ va **solo** en la primera línea.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -61,5 +55,6 @@ int main() {
         s += x;
     }
     cout << s << "\n";
+    return 0;
 }
 ```

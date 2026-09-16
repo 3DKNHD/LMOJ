@@ -1,8 +1,10 @@
-# Cuántos divisores
+# Reparto exacto
 
-Para cada $n$, imprime cuántos divisores positivos tiene. $1$ tiene $1$ divisor. Un primo tiene $2$.
+Después de la olimpiada quedó una bolsa con $n$ caramelos idénticos. Quieren guardarlos en cajitas **todas con la misma cantidad**, usando todos los caramelos, y sin dejar cajitas vacías.
 
-$T$ llega a $10^5$ y $n$ a $10^6$: criba (SPF) o contar divisores precalculado, no $\sqrt{n}$ por consulta.
+Elegir un tamaño de cajita $d$ que divida a $n$ da un reparto distinto: habrá $n/d$ cajitas de $d$ caramelos. Siempre existen al menos dos maneras cuando $n > 1$: una sola cajita con $n$, o $n$ cajitas con $1$. Si $n = 1$, solo cabe una cajita con un caramelo.
+
+El comité no hace una bolsa, hace $T$. Para cada $n$, ¿de cuántas maneras se puede hacer el reparto?
 
 ## Entrada
 
@@ -12,4 +14,4 @@ Siguen $T$ líneas con $n$ ($1 \le n \le 10^6$).
 
 ## Salida
 
-$T$ líneas con $d(n)$.
+$T$ líneas, cada una con la cantidad de divisores positivos de ese $n$.

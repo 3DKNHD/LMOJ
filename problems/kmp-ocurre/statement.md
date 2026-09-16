@@ -1,15 +1,17 @@
-# Ocurrencias del patrón
+# El estribillo
 
-Cuenta cuántas veces aparece $P$ en $T$, **contando overlaps** (`aaa` con `aa` vale 2).
+El coro ensaya un estribillo $P$ y un canto largo $T$, ambos escritos solo con letras minúsculas. Quieren saber **cuántas veces** aparece el estribillo dentro del canto.
 
-KMP. $|T|+|P| \le 10^6$. Si $P$ es vacío no ocurre (aquí $|P|\ge 1$).
+Las apariciones pueden **solaparse**. Por ejemplo, si el estribillo es `aa` y el canto es `aaa`, cuenta $2$ veces: posiciones $1$–$2$ y $2$–$3$. El estribillo nunca es vacío.
+
+Imprime esa cantidad.
 
 ## Entrada
 
-Primera línea: $P$ (solo letras minúsculas, $1 \le |P| \le 10^6$).
+La primera línea contiene $P$ ($1 \le |P| \le 10^6$, solo `a`–`z`).
 
-Segunda línea: $T$ (minúsculas, $1 \le |T| \le 10^6$).
+La segunda línea contiene $T$ ($1 \le |T| \le 10^6$, solo `a`–`z`).
 
 ## Salida
 
-Un entero.
+Un único entero: cuántas veces $P$ aparece en $T$, contando solapes.

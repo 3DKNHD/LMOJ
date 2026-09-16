@@ -1,8 +1,8 @@
-# Cifra final
+# El candado
 
-Para cada entero, imprime su **última cifra** (un dígito $0$–$9$). Si el número es negativo, usa el valor absoluto: $-17$ termina en $7$.
+El laboratorio cerró el depósito con un candado de **un solo dígito**. El código del día es un entero $n$ (puede ser enorme, y a veces el encargado lo anota con signo de menos). El candado no entiende signos: abre con la **última cifra decimal** del valor absoluto. Así, $17$ abre con $7$ y $-17$ también abre con $7$. El $0$ abre con $0$.
 
-En C++, $n \% 10$ con $n$ negativo **no** es ese dígito.
+Hoy hay $T$ códigos en la lista. Para cada uno, imprime el dígito que abre el candado.
 
 ## Entrada
 
@@ -12,4 +12,4 @@ Siguen $T$ líneas con un entero $n$ ($-10^{18} \le n \le 10^{18}$).
 
 ## Salida
 
-$T$ líneas con un dígito.
+$T$ líneas, cada una con un dígito $0$–$9$.

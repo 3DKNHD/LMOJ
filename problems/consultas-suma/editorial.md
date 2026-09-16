@@ -1,53 +1,54 @@
-# Editorial: Consultas de suma
+# Editorial: El libro de caja
 
-## Qué pide
+## Qué hay que hacer
 
-Arreglo **estático** $a_1,\dots,a_n$ y $q$ consultas $[L,R]$ (cerrado, 1-indexado). Imprime $a_L+\cdots+a_R$. $n,q \le 2\cdot 10^5$: $O(nq)$ no entra.
+El arreglo **no cambia**. Te preguntan muchas veces “suma del índice $L$ al $R$”. Si cada vez recorres $L..R$, en el peor caso haces $n\cdot q \approx 4\cdot 10^{10}$ sumas. Eso no entra en tiempo.
 
-## Idea
+## La idea: suma acumulada
 
-Prefijos. Definís
-
-$$
-p_0 = 0,\qquad p_i = a_1 + \cdots + a_i
-$$
-
-Entonces
+Arma `p[0] = 0` y
 
 $$
-a_L + \cdots + a_R = p_R - p_{L-1}
+p[i] = a_1 + a_2 + \cdots + a_i
 $$
 
-Precomputas $p$ en $O(n)$ y cada consulta es $O(1)$. Total $O(n+q)$.
+O sea `p[i] = p[i-1] + a[i]`.
 
-## Por qué es cierto
+La suma $a_L+\cdots+a_R$ es “todo hasta $R$” menos “todo hasta $L-1$”:
 
-$p_R$ suma todo hasta $R$. $p_{L-1}$ suma todo **antes** de $L$. Al restar quedan exactamente las posiciones $L..R$. Si $L=1$, $p_{L-1}=p_0=0$. Por eso el arreglo de prefijos tiene tamaño $n+1$ y arranca en $0$.
+$$
+p[R] - p[L-1]
+$$
+
+Si $L=1$, $p[0]=0$ y queda $p[R]$. Por eso el arreglo $p$ tiene tamaño $n+1$ y empieza en índice $1$.
+
+## Ejemplo
+
+$a = [3, 1, 4, 2]$ (índices $1..4$)
+
+| $i$ | $p[i]$ |
+|-----|--------|
+| $0$ | $0$ |
+| $1$ | $3$ |
+| $2$ | $4$ |
+| $3$ | $8$ |
+| $4$ | $10$ |
+
+Suma $2..4$: $p[4]-p[1] = 10-3 = 7$. Chequeo: $1+4+2=7$.
 
 ## 64 bits
 
-Cada $|a_i|\le 10^9$, $n\le 2\cdot 10^5$, así que $|p_i|\le 2\cdot 10^{14}$. `long long` en $p$ y en la respuesta.
+Cada $a_i$ $\pm 10^9$, $n=2\cdot 10^5$: el prefijo llega a $2\cdot 10^{14}$. `long long`.
 
-## Por qué no Fenwick / segment tree
+## Si te da TLE / WA
 
-Funcionan, pero el arreglo **no cambia**. Un BIT es $O(\log n)$ por consulta: más código para nada. Prefijo es la herramienta exacta.
+- Recorrer el rango cada vez.
+- `p[R]-p[L]` olvidándote el $-1$ (omites $a_L$).
+- `int` en `p`.
 
-## Complejidad
+## El código que pasa (C++)
 
-Tiempo $O(n+q)$, memoria $O(n)$.
-
-## Otras soluciones
-
-- Sparse table de sumas: overkill (la suma no es idempotente de la misma forma que el mínimo; se puede, pero no aporta).
-- Recalcular cada rango: TLE.
-
-## Trampas
-
-- Usar $p_R - p_L$ en vez de $p_R - p_{L-1}$ (te comes $a_L$).
-- Prefijos en `int`.
-- Consultas 0-indexadas contra arreglo 1-indexado.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -69,5 +70,6 @@ int main() {
         cin >> L >> R;
         cout << p[R] - p[L - 1] << "\n";
     }
+    return 0;
 }
 ```

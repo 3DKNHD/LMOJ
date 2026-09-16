@@ -1,41 +1,39 @@
-# Editorial: Prefijos pares
+# Editorial: La balanza
 
-## Qué pide
+## Qué hay que hacer
 
-Cuántos índices $i$ cumplen que $s_i = a_1+\cdots+a_i$ es **par**.
+Vas sumando de izquierda a derecha. Después de cada número miras si la suma hasta ahí es par. Cuenta cuántas veces lo fue.
 
-## Idea
+## Truco: no hace falta la suma gigante
 
-Solo importa la paridad. Recorres una vez, mantienes la suma (o su bit de paridad) y cuentas cuántas veces queda par.
+Un número es par o impar. La paridad de la suma:
 
-Un número es par sii su bit bajo es $0$. En complemento a dos, eso también vale para negativos: $-2$ es par, `-2 & 1 == 0` en C++.
+- par + par = par
+- impar + impar = par
+- par + impar = impar
 
-Equivalente: `if (pref % 2 == 0)` con `pref` en `long long`. En C++, `(-2) % 2 == 0`, `(-1) % 2 == -1`, así que `== 0` detecta pares.
+En código: `pref += x` y después `if (pref % 2 == 0)`. O más limpio con bit: `if ((pref & 1) == 0)` (el último bit es $0$ ⇔ par).
 
-## Por qué no hace falta el valor de la suma
+`pref` igual en `long long` porque vas acumulando de verdad.
 
-$s_i$ par $\iff s_{i-1}$ y $a_i$ tienen la **misma** paridad (par+par o impar+impar). Puedes guardar solo `pref ^= (a_i & 1)` o sumar `a_i` entero; ambas van.
+## Ejemplo
 
-El oficial suma el `long long` completo y mira `(pref & 1) == 0`. Correcto y simple.
+Lista $1, 2, 3, 4$
 
-## Complejidad
+- pref $1$ impar
+- pref $3$ impar
+- pref $6$ par → $+1$
+- pref $10$ par → $+2$
 
-$O(n)$, memoria $O(1)$ extra. $n \le 2\cdot 10^5$.
+Respuesta: $2$.
 
-## Otras soluciones
+## Si te da WA
 
-- Guardar todos los $s_i$ y filtrar: innecesario.
-- Contar prefijos **impares** y restar de $n$: mismo trabajo.
+Chequeaste si **el elemento** era par, no la **suma del prefijo**.
 
-No confundir con “cuántos **subarreglos** de suma par”. Eso es otro problema (mapa de paridades de prefijo, $O(n)$ también, pero no es este enunciado). Aquí son solo prefijos, no todos los $[L,R]$.
+## El código que pasa (C++)
 
-## Trampas
-
-- Usar `pref % 2 == 1` para impares en C++ con negativos (`%` negativo).
-- Olvidar que el prefijo de longitud $1$ también cuenta.
-- Acumulador `int` (la suma puede no caber; la paridad sí, pero si sumas el valor crudo, desborda y el bit puede corromperse en `int`).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -55,5 +53,6 @@ int main() {
         if ((pref & 1) == 0) ++ans;
     }
     cout << ans << "\n";
+    return 0;
 }
 ```

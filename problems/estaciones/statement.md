@@ -1,18 +1,17 @@
-# Estaciones más cercanas
+# Paradas más cercanas
 
-Grafo no dirigido sin pesos. Hay $k$ estaciones. Para **cada** nodo $1..n$ imprime
-la distancia a la estación más cercana, o $-1$ si no alcanza ninguna.
+La ciudad es un grafo de $n$ esquinas y $m$ calles bidireccionales, todas de largo $1$. Hay $k$ estaciones de subte, en esquinas distintas. Desde una esquina, la distancia a una estación es el mínimo número de calles que hay que caminar para llegar a ella.
 
-BFS multi-fuente: mete las $k$ estaciones en la cola a distancia 0.
+Para **cada** esquina $1..n$, imprime la distancia a la estación **más cercana**. Si desde esa esquina no se alcanza ninguna estación, imprime $-1$. Una esquina que es estación está a distancia $0$ de sí misma.
 
 ## Entrada
 
-$n$ $m$ $k$ ($1 \le n \le 10^5$, $0 \le m \le 2 \cdot 10^5$, $1 \le k \le n$).
+La primera línea contiene $n$, $m$ y $k$ ($1 \le n \le 10^5$, $0 \le m \le 2 \cdot 10^5$, $1 \le k \le n$).
 
-$k$ enteros distintos: nodos estación.
+La segunda línea contiene $k$ enteros distintos: las esquinas con estación ($1 \le s_i \le n$).
 
-$m$ líneas $u$ $v$.
+Siguen $m$ líneas con $u$ $v$ ($1 \le u,v \le n$).
 
 ## Salida
 
-$n$ enteros en una línea.
+Una línea con $n$ enteros separados por espacios.

@@ -1,15 +1,17 @@
-# Subarreglos XOR
+# El código $X$
 
-Cuántos subarreglos contiguos tienen XOR igual a $X$.
-Prefijo XOR $p_i = a_1 \oplus \cdots \oplus a_i$. Un subarreglo $(L,R)$ vale $p_R \oplus p_{L-1}$.
-Mapa de frecuencias de prefijos. $O(n)$.
+El laboratorio de señales grabó una secuencia $a_1, \dots, a_n$ de enteros no negativos. El «código secreto» de esta semana es un entero $X$.
+
+Un **tramo** es un pedazo contiguo $a_L, a_{L+1}, \dots, a_R$. El valor del tramo es el XOR de todos esos números (el XOR de un solo elemento es él mismo).
+
+¿Cuántos tramos tienen valor exactamente $X$? El total puede ser grande.
 
 ## Entrada
 
-$n$ $X$ ($1 \le n \le 2 \cdot 10^5$, $0 \le X < 2^{30}$).
+La primera línea contiene $n$ y $X$ ($1 \le n \le 2 \cdot 10^5$, $0 \le X < 2^{30}$).
 
-$n$ enteros $a_i$ ($0 \le a_i < 2^{30}$).
+La segunda línea contiene $n$ enteros $a_i$ ($0 \le a_i < 2^{30}$).
 
 ## Salida
 
-Un entero (64 bits).
+Un único entero: la cantidad de subarreglos contiguos con XOR igual a $X$.

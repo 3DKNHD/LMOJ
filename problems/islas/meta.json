@@ -1,10 +1,13 @@
 {
   "code": "islas",
-  "name": "Islas de puntos",
+  "name": "Tierra y mar",
   "points": 4,
   "timeLimit": 1.5,
   "memoryLimit": 256,
-  "tags": ["bfs", "grid"],
+  "tags": [
+    "bfs",
+    "grid"
+  ],
   "partial": false,
   "author": "LMOJ"
 }

@@ -1,10 +1,12 @@
 {
   "code": "consultas-suma",
-  "name": "Consultas de suma",
+  "name": "El libro de caja",
   "points": 3,
   "timeLimit": 1.0,
   "memoryLimit": 256,
-  "tags": ["prefijos"],
+  "tags": [
+    "prefijos"
+  ],
   "partial": false,
   "author": "LMOJ"
 }

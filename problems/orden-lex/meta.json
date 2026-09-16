@@ -1,6 +1,6 @@
 {
   "code": "orden-lex",
-  "name": "Orden lexicográfico",
+  "name": "El cronograma",
   "points": 8,
   "timeLimit": 2.0,
   "memoryLimit": 256,

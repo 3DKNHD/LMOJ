@@ -1,43 +1,41 @@
-# Editorial: El mayor
+# Editorial: La puja
 
-## Qué pide
+## Qué hay que hacer
 
-$\max(a_1,\dots,a_n)$. Un entero.
+Te dan $n$ números. Quieres el más grande. Como buscar el más alto en una fila de personas: miras al primero, y cada vez que aparece alguien más alto, te acuerdas de ese.
 
-## Idea
+## Paso a paso
 
-Un único recorrido. Guardas el mejor visto hasta ahora. Al empezar, inicializa con el **primer** elemento (o con un centinela menor que cualquier $a_i$).
+1. Lee $n$.
+2. Lee el primer número y lo guardas en `best`. Por ahora es el campeón.
+3. Lee los $n-1$ que faltan. Si alguno es **estrictamente mayor** que $best$, `best` pasa a ser ese.
+4. Imprime `best`.
 
-## Por qué no usar `0` de inicialización
+## Ejemplo
 
-Si pones `ans = 0` y todos los $a_i$ son negativos, el máximo real es negativo y tú imprimes $0$: WA.
+Lista: $4,\ 10,\ 3,\ 10,\ -2$.
 
-Opciones correctas:
+- empiezo con $4$
+- $10 > 4$ → campeón $10$
+- $3$ no
+- $10$ empata, no cambia (el máximo sigue siendo $10$)
+- $-2$ no
 
-1. Leer el primero: `ans = a[0]`, luego comparar el resto.
-2. Centinela: `ans = -1e18` (cualquier cota estrictamente menor que $-10^9$).
-3. `*max_element(a.begin(), a.end())` después de leer.
+Respuesta: $10$.
 
-## Por qué un pase es suficiente
+## Detalles que importan
 
-El máximo de un conjunto es el único elemento $\ge$ todos los demás. Si en el índice $i$ ves un valor mayor que `ans`, ese pasa a ser el candidato. Al terminar, ningún elemento quedó sin comparar, así que `ans` es el máximo global.
+Los números pueden ser **negativos**. El máximo de $-5,-1,-8$ es $-1$, no $0$. No inicialices $best$ en $0$. Inicializalo con el **primer** elemento de la lista.
 
-No hace falta ordenar ($O(n \log n)$ también da AC aquí, pero es más lento y no es la idea).
+Usa `long long` por las dudas (llegan a $10^9$, `int` alcanza, pero no te cuesta nada).
 
-## Empates
+## Si te da WA
 
-Si el máximo aparece varias veces, cualquiera de esas copias es un máximo válido: el enunciado pide el **valor**, no la posición. Da igual cuál copies.
+Inicializaste el máximo en $0$ y todos los números eran negativos.
 
-## Complejidad
+## El código que pasa (C++)
 
-$O(n)$ tiempo, $O(1)$ extra si no guardas el arreglo. $n \le 2 \cdot 10^5$ entra holgado.
-
-## Trampas
-
-- Inicializar en $0$.
-- Empezar el `for` en $i=0$ **y** haber puesto `ans = a[0]`, comparando `a[0]` de nuevo: no está mal, solo es redundante.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -48,13 +46,14 @@ int main() {
     cin.tie(nullptr);
     int n;
     cin >> n;
-    long long ans;
-    cin >> ans;
+    long long best;
+    cin >> best;
     for (int i = 1; i < n; ++i) {
         long long x;
         cin >> x;
-        if (x > ans) ans = x;
+        if (x > best) best = x;
     }
-    cout << ans << "\n";
+    cout << best << "\n";
+    return 0;
 }
 ```

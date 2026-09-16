@@ -1,60 +1,50 @@
-# Editorial: Segunda marca
+# Editorial: La plata
 
-## Qué pide
+## Qué hay que hacer
 
-La **segunda más grande entre los valores distintos**. Si todos los números son iguales, no existe: imprime `-1`.
+Quieres la **segunda más grande**, pero mirando valores **distintos**. Si el oro es $10$ y aparece diez veces, esas diez no sirven para la plata. La plata es el siguiente número más grande que **no sea** $10$.
 
-Ejemplo del enunciado: $5,1,5,3,3,4$. Los distintos ordenados desc. son $5,4,3,1$. La segunda marca es $4$ (no $5$, aunque $5$ aparezca dos veces).
+Si todos son iguales, no hay plata: imprimes `-1`.
 
-## Idea (un pase)
+## La idea (un solo pase)
 
-Mantén dos variables:
+Guarda dos variables:
 
-- `m1`: el máximo distinto visto.
-- `m2`: el segundo máximo distinto visto.
+- `m1`: lo más grande que viste hasta ahora (el oro).
+- `m2`: lo segundo más grande distinto (la plata). Al principio las dos valen un número muy pequeño, tipo $-2^{60}$, que no puede aparecer en la lista.
 
-Centinela `NEG` menor que cualquier $a_i$ (por ejemplo $-2^{60}$).
+Por cada $x$:
 
-Para cada $x$:
+1. Si $x > m1$: el oro viejo baja a plata, $x$ es el oro nuevo. $m2 = m1; m1 = x;$
+2. Si $x$ es más pequeño que el oro **y** más grande que la plata: $x$ es una plata mejor. $m2 = x;$
+3. Si $x$ es igual al oro: no hagas nada. Es otro intento del mismo salto.
 
-1. Si $x > m1$: el viejo máximo baja a segundo, $x$ es el nuevo máximo.  
-   `m2 = m1; m1 = x;`
-2. Si $x < m1$ **y** $x > m2$: $x$ es un valor distinto del máximo y mejor que el segundo actual.  
-   `m2 = x;`
-3. Si $x == m1`: es **otro** del mismo máximo. No tocas `m2`. Eso es lo que ignora duplicados del mayor.
+Al final, si `m2` sigue siendo el número ridículo, no hubo plata → `-1`.
 
-Al final, si `m2` sigue en el centinela, no hubo un segundo valor distinto → `-1`.
+## Ejemplo del enunciado
 
-## Por qué no basta “el segundo del arreglo ordenado”
+$5,1,5,3,3,4$
 
-Si ordenas $5,5,4$ descendente y tomas `a[1]`, obtienes $5$. El enunciado quiere $4$. Tienes que **saltar iguales**.
+| $x$ | oro $m1$ | plata `m2` |
+|-----|----------|------------|
+| $5$ | $5$ | (vacío) |
+| $1$ | $5$ | $1$ |
+| $5$ | $5$ | $1$ (no cambia) |
+| $3$ | $5$ | $3$ |
+| $3$ | $5$ | $3$ |
+| $4$ | $5$ | $4$ |
 
-Versión con sort, también correcta:
+Respuesta: $4$.
 
-1. Ordena desc.
-2. Busca el primer `a[i] < a[0]`.
-3. Si no existe, `-1`.
+## Si te da WA
 
-Es $O(n \log n)$. El pase lineal es $O(n)$ y no usa memoria extra.
+- Tomaste el segundo del arreglo ordenado **con repetidos**: en $5,5,4$ dirías $5$ y es $4$.
+- Ordenaste y agarraste `a[n-2]` sin sacar duplicados.
+- Inicializaste en $0$ y había negativos.
 
-Un `set` / `std::set` de mayores también sirve: insertas todo y miras el segundo `rbegin()`. $O(n \log n)$ y más pesado.
+## El código que pasa (C++)
 
-## Invariante
-
-Después de cada elemento, `{m1, m2}` (ignorando centinelas) son los dos mayores **distintos** del prefijo, o solo uno si el prefijo es constante. Se demuestra por casos en la actualización: o llega un nuevo máximo, o un valor estrictamente entre `m2` y `m1`, o un duplicado / algo $\le m2$.
-
-## Complejidad
-
-$O(n)$ tiempo, $O(1)$ memoria extra. Obligatorio pensar $O(n)$ con $n = 2 \cdot 10^5$, aunque $O(n \log n)$ también entra.
-
-## Trampas
-
-- Segunda posición tras sort **sin** compactar iguales.
-- Inicializar `m1 = m2 = 0` (falla si todo es negativo: el segundo real puede ser $< 0$ y confundes centinela con un valor).
-- Actualizar `m2` cuando $x == m1$.
-- $n = 1$: no hay segundo → `-1`.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -79,5 +69,6 @@ int main() {
     }
     if (m2 == NEG) cout << -1 << "\n";
     else cout << m2 << "\n";
+    return 0;
 }
 ```

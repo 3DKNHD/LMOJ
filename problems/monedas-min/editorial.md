@@ -1,43 +1,53 @@
-# Editorial: Mínimas monedas
+# Editorial: El vuelto
 
-## Qué pide
+## Qué hay que hacer
 
-Monedas **ilimitadas** de $n\le 100$ tipos. Mínimo número para sumar exactamente $S\le 10^5$, o $-1$.
+Monedas **ilimitadas** de cada tipo. Mínima cantidad para sumar exactamente $S$, o $-1$.
 
-## Idea
+## DP hacia adelante (al revés que la mochila $0/1$)
 
-DP unbounded knapsack / coin change. `dp[j]` = mínimo monedas para sumar $j$. `dp[0]=0`, resto `INF`.
+`dp[j]` = mínimas monedas para armar $j$. $dp[0]=0$, el resto “infinito” (`1e9`).
 
-**Hacia adelante:** para cada moneda $x$, `for j = x..S: dp[j] = min(dp[j], dp[j-x]+1)`.
+Por cada tipo $c$:
 
-Así reúsas `dp[j-x]` **ya actualizado** en el mismo pase: puedes usar $x$ varias veces. Eso es ilimitado.
+```
+for j = c; j <= S; j++
+    dp[j] = min(dp[j], dp[j-c] + 1)
+```
 
-## Contrastar con 0/1
+Para **adelante**: `dp[j-c]` **ya puede** haber usado $c$, así que puedes repetir el tipo. Eso es lo que quieres aquí.
 
-En mochila 0/1 recorres $j$ **de atrás**. Si aquí recorrieras de atrás, cada moneda se usaría **a lo sumo una vez**: otro problema.
+Si `dp[S]` sigue infinito, `-1`.
 
-## Complejidad
+## Contrastá con el bolso
 
-$O(nS) = 100 \cdot 10^5 = 10^7$. Entra.
+Mochila $0/1$: $j$ **baja**. Monedas: $j$ **sube**. Ese es el único cambio de dirección y cambia el problema por completo.
 
-Greedy por denominación (siempre la más grande) **falla** si las monedas no son canónicas (p.ej. $1,3,4$ y $S=6$: greedy $4+1+1=3$, óptimo $3+3=2$).
+## Si te da WA
 
-## `INF`
+Loop hacia atrás (cada moneda una vez). O no imprimir `-1`.
 
-`1e9` basta: nunca usas más de $S$ monedas de $1$. Si `dp[S]>=INF`, imposible.
+## El código que pasa (C++)
 
-## Trampas
-
-- Recorrer $W$ hacia atrás (0/1).
-- Greedy.
-- `int` overflow si `INF+1` (usa `min` solo cuando `dp[j-x]` no es INF, o un INF chico).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-vector<int> dp(S + 1, INF);
-dp[0] = 0;
-for (int x : c)
-    for (int j = x; j <= S; ++j)
-        dp[j] = min(dp[j], dp[j - x] + 1);
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n,S; cin>>n>>S;
+    vector<int> c(n);
+    for (int i=0;i<n;++i) cin>>c[i];
+    const int INF=1e9;
+    vector<int> dp(S+1, INF);
+    dp[0]=0;
+    for (int x: c)
+        for (int j=x;j<=S;++j) dp[j]=min(dp[j], dp[j-x]+1);
+    cout << (dp[S]>=INF ? -1 : dp[S]) << "\n";
+    return 0;
+}
 ```

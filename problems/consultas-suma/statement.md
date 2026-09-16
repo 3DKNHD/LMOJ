@@ -1,8 +1,10 @@
-# Consultas de suma
+# El libro de caja
 
-Tienes un arreglo estático $a_1,\dots,a_n$ y $q$ consultas. Cada consulta pide la suma $a_L + \cdots + a_R$.
+La cooperativa anota el día en $n$ renglones, en orden cronológico. El renglón $i$ tiene un entero $a_i$: positivo si entró plata, negativo si salió (devolución, pago a un proveedor, etc.).
 
-$O(nq)$ no entra.
+El tesorero no pide siempre el total del día. Viene con $q$ preguntas del estilo: «mira solo del renglón $L$ al $R$ inclusive, ¿cuál es el saldo de ese tramo?»
+
+Los renglones no cambian entre pregunta y pregunta. Puede haber muchas consultas. Cada respuesta es un solo entero, que puede ser negativo o muy grande.
 
 ## Entrada
 
@@ -14,4 +16,4 @@ Siguen $q$ líneas con $L$ $R$ ($1 \le L \le R \le n$).
 
 ## Salida
 
-$q$ líneas, cada una con la suma del rango (cabe en 64 bits).
+$q$ líneas, cada una con $a_L + \cdots + a_R$.

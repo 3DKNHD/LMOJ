@@ -1,17 +1,17 @@
-# Rutas con peso
+# El colectivo más barato
 
-Grafo **no dirigido** con pesos no negativos. Distancia mínima de $s$ a $t$.
-Si no hay camino, $-1$.
+La ciudad tiene $n$ paradas y $m$ tramos de colectivo. Cada tramo une dos paradas $u$ y $v$ y se puede viajar en los dos sentidos; el boleto de ese tramo cuesta $w$ (un entero positivo). Puede haber varias líneas entre el mismo par, y hasta un tramo que sale y vuelve a la misma parada.
 
-Los pesos llegan a $10^9$ y un camino puede tener $10^5$ aristas: usa `long long`.
-`int` + `INF = 2^{31}-1` revienta (trampa de tu sparty).
+Quieres ir de la parada $s$ a la parada $t$ pagando lo **mínimo** posible. El costo de un viaje es la suma de los boletos de los tramos que tomas. Si $s = t$, no te subes a nada: el costo es $0$. Si no hay forma de llegar, imprime $-1$.
+
+Los boletos y los caminos largos pueden hacer que la suma sea enorme.
 
 ## Entrada
 
-$n$ $m$ $s$ $t$ ($1 \le n \le 10^5$, $0 \le m \le 2 \cdot 10^5$, $1 \le s,t \le n$).
+La primera línea contiene $n$, $m$, $s$ y $t$ ($1 \le n \le 10^5$, $0 \le m \le 2 \cdot 10^5$, $1 \le s,t \le n$).
 
-$m$ líneas $u$ $v$ $w$ ($1 \le w \le 10^9$). Puede haber múltiples aristas y bucles.
+Siguen $m$ líneas con $u$ $v$ $w$ ($1 \le u,v \le n$, $1 \le w \le 10^9$).
 
 ## Salida
 
-Un entero.
+Un único entero: el costo mínimo, o $-1$.

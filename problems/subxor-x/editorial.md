@@ -1,51 +1,54 @@
-# Editorial: Subarreglos XOR
+# Editorial: El código X
 
-## Qué pide
+## Qué hay que hacer
 
-Cuántos $L\le R$ cumplen $a_L \oplus \cdots \oplus a_R = X$. $n\le 2\cdot 10^5$.
+XOR compara cada bit: si los dos bits son distintos, el resultado es $1$; si son iguales, $0$.
+Dos reglas útiles: $x \oplus x = 0$ y $x \oplus 0 = x$.
+También: si $p \oplus y = X$, entonces $y = p \oplus X$.
 
-## Idea
+Hay que contar cuántos trozos **contiguos** del arreglo tienen XOR igual a $X$.
 
-Prefijo XOR: $p_0=0$, $p_i = a_1 \oplus \cdots \oplus a_i$. Entonces
+## Prefijo XOR
 
-$$
-a_L \oplus \cdots \oplus a_R = p_R \oplus p_{L-1}
-$$
+Define $p_0 = 0$ y $p_i = a_1 \oplus a_2 \oplus \cdots \oplus a_i$.
 
-porque $x\oplus x=0$. Quieres $p_R \oplus p_{L-1} = X$, o sea $p_{L-1} = p_R \oplus X$.
+El XOR del intervalo $L..R$ es $p_R \oplus p_{L-1}$, porque los elementos anteriores a $L$ se cancelan ($x \oplus x = 0$).
 
-Recorres $R=1..n$. Antes de insertar $p_R$, sumas cuántos prefijos anteriores valen $p_R \oplus X$. Luego incrementas la frecuencia de $p_R$.
+Se busca $p_R \oplus p_{L-1} = X$, que es lo mismo que $p_{L-1} = p_R \oplus X$.
 
-`f[0]=1` cuenta el prefijo vacío: subarreglos que empiezan en $1$.
+Recorre el arreglo de izquierda a derecha y mantén el prefijo actual $p$. Un mapa guarda cuántas veces apareció cada prefijo. Antes de anotar el $p$ actual, pregunta al mapa cuántas veces ya viste el valor $p \oplus X$. Cada una corresponde a un $L$ válido que termina en esta posición. Después suma $1$ a la cuenta de $p$.
 
-## Por qué $O(n)$
+Empieza el mapa con `{0: 1}`: el prefijo vacío, para intervalos que empiezan en $1$.
 
-Un hashmap. El oficial usa `unordered_map` con `reserve`. `map` sería $O(n\log n)$ y también entra.
+## Si te da TLE
 
-## 64 bits
+$O(n^2)$ calculando XOR de cada par $L,R$.
 
-Peor caso: todo $0$, $X=0$: $\binom{n+1}{2}$ subarreglos. `long long`.
+## El código que pasa (C++)
 
-## Otras soluciones
-
-Trie de bits de prefijos: overkill con $X$ dado (un mapa basta). $O(n^2)$: TLE.
-
-## Trampas
-
-- Olvidar `f[0]=1`.
-- Insertar $p$ **antes** de consultar: cuentas el subarreglo vacío si $X=0$ de más, o duplicas.
-- `int` en el contador.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-unordered_map<int, int> f;
-f[0] = 1;
-int p = 0;
-long long ans = 0;
-for (...) {
-    p ^= a;
-    ans += f[p ^ X];
-    f[p]++;
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n; int X; cin>>n>>X;
+    unordered_map<int,int> f;
+    f.reserve(n*2);
+    f[0]=1;
+    int p=0; ll ans=0;
+    for (int i=0;i<n;++i) {
+        int a; cin>>a;
+        p ^= a;
+        auto it=f.find(p^X);
+        if (it!=f.end()) ans += it->second;
+        f[p]++;
+    }
+    cout << ans << "\n";
+    return 0;
 }
 ```

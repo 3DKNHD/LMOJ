@@ -1,37 +1,49 @@
-# Editorial: Ocurrencias del patrón
+# Editorial: El estribillo
 
-## Qué pide
+## Qué hay que hacer
 
-Cuántas veces $P$ aparece en $T$, **con overlaps**. `|P|+|T|\le 10^6`. `aaa` con `aa` vale $2$.
+Cuántas veces aparece $P$ dentro de $T$, **contando superposiciones**. $aa$ en `aaa` vale $2$.
 
-## Idea
+## KMP, paso a paso
 
-KMP. Concatenas `s = P + "#" + T` (el `#` no aparece en el alfabeto de letras). El prefijo-función $\pi[i]$ = largo del borde propio de $s[0..i]$.
+Junta las dos cadenas en una sola: $s = P + \# + T$. El carácter `#` no aparece en $P$ ni en $T$, así que no mezcla las dos partes.
 
-Cada vez que $\pi[i] = |P|$, hay una ocurrencia que termina en esa posición de $s$. El separador impide que el match cruce de $P$ a $T$ de forma espuria.
+Para cada posición $i$ calcula $\pi[i]$: el largo del **borde** más largo de $s[0..i]$. Un borde es un trozo que es a la vez prefijo y sufijo, y más corto que toda la cadena.
 
-Overlaps: KMP no “salta” el patrón entero a ciegas; $\pi$ puede ser $|P|-1$ y contar otra ocurrencia ya en el siguiente carácter (`aa` en `aaa`).
+Cada vez que $\pi[i]$ llega a $|P|$, acabas de leer una copia completa de $P$ dentro de $T$.
 
-## Alternativa
+Para calcular $\pi$: $j$ es el borde de la posición anterior. Si el carácter actual no coincide, sustituye $j$ por $\pi[j-1]$ (prueba un borde más corto). Si coincide, aumenta $j$ en $1$. El total es proporcional a $|P|+|T|$.
 
-KMP clásico: construyes $\pi$ solo de $P$ y recorres $T$ con un puntero $j$. Cuentas cuando $j==|P|$ y haces $j=\pi[j-1]$. Equivalente.
+## Si te da TLE / WA
 
-`std::string::find` en bucle desde `pos+1` también cuenta overlaps y es $O(|P||T|)$ worst-case: TLE en peores casos.
+`T.find` en un loop que avanza $1$ (lento o omites superposiciones). O no contar superposiciones.
 
-## Complejidad
+## El código que pasa (C++)
 
-$O(|P|+|T|)$.
-
-## Trampas
-
-- Contar sin overlaps (`pos += |P|`).
-- Olvidar el separador y que $P$ sea sufijo de un prefijo raro.
-- `int` vs tamaño `size_t` en índices. El contador cabe en `int` ($10^6$).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-string s = p + "#" + t;
-// pi estándar
-if (j == m) ++ans;
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    string p, t;
+    cin >> p >> t;
+    string s = p + "#" + t;
+    int m = (int)p.size();
+    vector<int> pi(s.size());
+    int ans = 0;
+    for (int i = 1; i < (int)s.size(); ++i) {
+        int j = pi[i - 1];
+        while (j && s[i] != s[j]) j = pi[j - 1];
+        if (s[i] == s[j]) ++j;
+        pi[i] = j;
+        if (j == m) ++ans;
+    }
+    cout << ans << "\n";
+    return 0;
+}
 ```

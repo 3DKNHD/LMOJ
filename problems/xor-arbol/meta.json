@@ -1,10 +1,14 @@
 {
   "code": "xor-arbol",
-  "name": "XOR en el árbol",
+  "name": "El rumor en el árbol",
   "points": 7,
   "timeLimit": 2.0,
   "memoryLimit": 256,
-  "tags": ["árboles", "binary lifting", "xor"],
+  "tags": [
+    "árboles",
+    "binary lifting",
+    "xor"
+  ],
   "partial": false,
   "author": "LMOJ"
 }

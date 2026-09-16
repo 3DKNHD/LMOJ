@@ -1,49 +1,94 @@
-# Editorial: XOR en el árbol
+# Editorial: El rumor en el árbol
 
-## Qué pide
+## Qué hay que hacer
 
-XOR de los $a_i$ en el camino $u$–$v$ (ambos extremos). $n,q\le 2\cdot 10^4$. Árbol.
+Árbol. Cada nodo un número. Preguntas: XOR de todos los nodos del camino $u$–$v$, **incluyendo** las dos puntas. Si $u=v$, es $a_u$.
 
-## Idea
+## Prefijo XOR desde la raíz + LCA
 
-XOR de prefijos a la raíz más LCA.
+Fija el nodo $1$ como raíz. Para cada nodo $x$, guarda `pxor[x]`: el XOR de todos los valores en el camino de la raíz hasta $x$ (incluido $x$).
 
-`pxor[x]` = $a_{r} \oplus \cdots \oplus a_x$ en el camino raíz $\to x$ (el oficial: raíz $=1$, `pxor[1]=a[1]`).
-
-El camino $u$–$v$ es $u\rightsquigarrow\mathrm{lca}$ más $\mathrm{lca}\rightsquigarrow v$. En XOR:
+El camino entre $u$ y $v$ pasa por su ancestro común más cercano, llamado LCA y aquí $w$. La fórmula es:
 
 $$
-\mathrm{pxor}[u] \oplus \mathrm{pxor}[v] \oplus a[\mathrm{lca}]
+pxor[u] \oplus pxor[v] \oplus a[w]
 $$
 
-Porque `pxor[u] ^ pxor[v]` cancela el camino raíz–lca **dos veces** (queda $0$) y deja $(u..\mathrm{lca})$ y $(v..\mathrm{lca})$ **sin** $a[\mathrm{lca}]$. Hay que volver a XOR-ear $a[\mathrm{lca}]$.
+Por qué hay que volver a aplicar $a[w]$: `pxor[u] ⊕ pxor[v]` recorre $u$–$w$–$v$, pero $w$ aparece dos veces y el XOR de un número consigo mismo es $0$. Entonces $w$ desaparece. Hay que volver a incluir $a[w]$.
 
-Si $u=v$: `pxor[u]^pxor[u]^a[u] = a[u]`. Correcto.
+## Cómo calcular el LCA
 
-## LCA
+`up[x][k]` es el padre de $x$ al subir $2^k$ aristas. Se llena con un DFS.
 
-Binary lifting: `up[x][k]` = $2^k$-ésimo padre. `LOG=16` porque $2^{16}>2\cdot 10^4$. Subes el más profundo, luego subes a la vez hasta que los padres coinciden.
+Para dos nodos: primero sube el más profundo hasta que ambos estén a la misma profundidad. Luego súbelos a la vez mientras sus padres no coincidan. Un paso más y llegas al LCA.
 
-## Complejidad
+Con $n \le 2\cdot 10^4$, basta $2^{16} = 65536$ (por eso `LOG = 16`).
 
-Build $O(n\log n)$, query $O(\log n)$. $q\cdot 16$ holgado.
+## Si te da TLE / WA
 
-DFS recursivo con $n=2\cdot 10^4$ suele vivir; una cadena profunda en otros jueces pediría DFS iterativo. Aquí $n$ es chico a propósito.
+XOR recorriendo el camino en cada pregunta ($O(n)$ por query). Olvidar el $⊕ a[w]$.
 
-## Otras soluciones
+## El código que pasa (C++)
 
-Euler tour + RMQ sobre `depth` para LCA. O HLD. Overkill.
-
-## Trampas
-
-- Olvidar `^ a[lca]` (camino sin el lca).
-- `pxor` sin incluir $a$ del nodo.
-- `LOG` corto.
-- Tratar el grafo como dirigido.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-int w = lca(u, v);
-int ans = pxor[u] ^ pxor[v] ^ a[w];
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n, q;
+    cin >> n >> q;
+    vector<int> a(n + 1);
+    for (int i = 1; i <= n; ++i) cin >> a[i];
+    vector<vector<int>> g(n + 1);
+    for (int i = 0; i < n - 1; ++i) {
+        int u, v;
+        cin >> u >> v;
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+    const int LOG = 16;
+    vector<int> depth(n + 1), pxor(n + 1);
+    vector<array<int, 16>> up(n + 1);
+    for (int i = 0; i <= n; ++i) up[i].fill(0);
+
+    function<void(int, int)> dfs = [&](int u, int p) {
+        up[u][0] = p;
+        for (int k = 1; k < LOG; ++k) up[u][k] = up[up[u][k - 1]][k - 1];
+        for (int v : g[u]) {
+            if (v == p) continue;
+            depth[v] = depth[u] + 1;
+            pxor[v] = pxor[u] ^ a[v];
+            dfs(v, u);
+        }
+    };
+    pxor[1] = a[1];
+    dfs(1, 1);
+
+    auto lca = [&](int u, int v) {
+        if (depth[u] < depth[v]) swap(u, v);
+        int diff = depth[u] - depth[v];
+        for (int k = 0; k < LOG; ++k)
+            if (diff >> k & 1) u = up[u][k];
+        if (u == v) return u;
+        for (int k = LOG - 1; k >= 0; --k)
+            if (up[u][k] != up[v][k]) {
+                u = up[u][k];
+                v = up[v][k];
+            }
+        return up[u][0];
+    };
+
+    while (q--) {
+        int u, v;
+        cin >> u >> v;
+        int w = lca(u, v);
+        int ans = pxor[u] ^ pxor[v] ^ a[w];
+        cout << ans << "\n";
+    }
+    return 0;
+}
 ```

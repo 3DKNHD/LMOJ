@@ -1,53 +1,46 @@
-# Editorial: Inversiones
+# Editorial: Adelantamientos
 
-## Qué pide
+## Qué hay que hacer
 
-Número de pares $i < j$ con $a_i > a_j$. Empates **no** cuentan. $n \le 2\cdot 10^5$, $a_i \le 10^9$: $O(n^2)$ no entra. La respuesta cabe en 64 bits ($\binom{n}{2} \approx 2\cdot 10^{10}$).
+Una inversión es un par “adelante más alto que atrás”: $i<j$ y $a_i > a_j$. Empate no cuenta.
 
-## Idea
+Contar todos los pares recorriendo todo es $n^2$. No entra.
 
-Procesas de izquierda a derecha. Cuando estás en $j$, cuántos $i < j$ tienen $a_i > a_j$. Eso es “cuántos ya vistos son **estrictamente mayores** que $a_j$”.
+## La idea
 
-Estructura: Fenwick (BIT) de frecuencias sobre valores. Tras comprimir coordenadas:
+Vas de **izquierda a derecha**. Cuando estás en la posición $i$, ya procesaste $i$ personas de adelante. ¿Cuántas de esas son **más altas** que $a_i$? Esas forman inversión con $i$.
 
-- `fw.sum(x)` = cuántos ya insertados tienen valor $\le x$.
-- Ya insertaste $j$ elementos (índices $0..j-1$, o sea $i$ en el oficial).
-- Mayores que $a_j$: `i - fw.sum(a[j])`.
+Eso es: total procesadas $i$, menos cuántas son $\le a_i$.
 
-Luego `fw.add(a[j], 1)`.
+Para responder “cuántos ya vi que son $\le x$” rápido, usas un árbol de frecuencias (Fenwick) sobre los **valores**. Como los valores llegan a $10^9$, primero los comprimes: el más pequeño pasa a $1$, el siguiente distinto a $2$, etc. El orden se mantiene.
 
-Por qué $\le$ y no $<$: si usas `sum(a[j]-1)` cuentas valores $< a_j$, y $i$ menos eso incluye los **iguales**. Los iguales no son inversión. `sum(a[j])` incluye iguales, y al restar de $i$ **excluyes** iguales y menores: quedan solo los mayores. Exacto.
+## Paso a paso
 
-## Compresión
+1. Copia la lista, ordénala, saca repetidos: eso es el diccionario.
+2. Reemplazá cada $a_i$ por su ranking ($1..$cuántos distintos).
+3. Fenwick vacío. `ans=0`.
+4. Para $i = 0..n-1$:
+   - `ans += i - fw.sum(a[i])`  // procesados menos los $\le a_i$
+   - `fw.add(a[i], 1)`          // ahora esta persona existe
+5. Imprime `ans` en `long long`.
 
-$a_i$ llega a $10^9$; el BIT necesita índices $1..u$ con $u\le n$. Ordenas una copia, `unique`, y reemplazas cada $a_i$ por su rango $1..u$.
+## Ejemplo
 
-Valores iguales reciben el **mismo** rango, y el argumento de arriba sigue valiendo.
+$3, 1, 2$
 
-## Merge sort
+- $3$: nadie adelante → $0$, anoto el $3$
+- $1$: hay $1$ adelante y ninguno $\le 1$ → $+1$
+- $2$: hay $2$ adelante, uno $\le 2$ (el $1$) → $+1$
 
-Al mergear dos mitades ordenadas, cada elemento de la derecha “se come” los de la izquierda que aún no salieron (son mayores y estaban antes). Es el conteo clásico $O(n\log n)$ sin BIT. También es la solución de libro.
+Total $2$: $(3,1)$ y $(3,2)$. $(1,2)$ no es inversión.
 
-`std::policy` / `__gnu_pbds` tree con order statistics: mismo $O(n\log n)$.
+## Si te da TLE / WA
 
-## Complejidad
+$O(n^2)$. O $i < j$ con $a_i \ge a_j$ (contaste empates).
 
-$O(n \log n)$ tiempo, $O(n)$ memoria.
+## El código que pasa (C++)
 
-## Otras soluciones
-
-- $O(n^2)$ doble `for`: TLE.
-- `std::set` y `distance`: $O(n^2)$.
-- Invertir el arreglo y contar “menores a la izquierda”: simétrico, mismo BIT.
-
-## Trampas
-
-- Contar $a_i \ge a_j$ (incluye iguales).
-- BIT 0-indexado mal implementado (`i += i & -i` necesita índices $\ge 1$).
-- Acumulador `int`.
-- Comprimir sin `unique` (rangos con huecos no rompen, pero duplicar índices iguales sí si asignas posiciones distintas a empates).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -85,5 +78,6 @@ int main() {
         fw.add(a[i], 1);
     }
     cout << ans << "\n";
+    return 0;
 }
 ```

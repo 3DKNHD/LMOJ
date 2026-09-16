@@ -1,45 +1,53 @@
-# Editorial: Estaciones más cercanas
+# Editorial: Paradas más cercanas
 
-## Qué pide
+## Qué hay que hacer
 
-Para **cada** nodo, distancia (en aristas) a la estación más cercana, o $-1$. $k$ estaciones, grafo no dirigido sin pesos.
+Varias estaciones. Para **cada** esquina, la distancia a la estación más cercana, o `-1`.
 
-## Idea
+## Un solo BFS con muchas fuentes
 
-BFS **multi-fuente**: metes las $k$ estaciones en la cola con `dist=0` **al mismo tiempo**. Un BFS normal desde un super-nodo virtual conectado a las estaciones (peso 0) es lo mismo.
+En vez de un BFS por estación ($k$ veces el grafo), mete **todas** las estaciones en la cola al principio, con distancia $0$. El BFS normal hace el resto: la primera vez que tocas un nodo es desde la estación más cercana.
 
-La primera vez que visitas $v$ es desde la estación más cercana: todas las aristas pesan $1$.
+Si un nodo nunca se toca, `-1`.
 
-## Por qué no $k$ BFS
+Cuidado: las $k$ estaciones son distintas. Si por error metes dos veces la misma, no pasa nada si $d$ ya era $0$.
 
-$k\cdot(n+m)$ con $k,n\sim 10^5$: TLE. Un solo BFS $O(n+m)$.
+## Si te da TLE
 
-## Estaciones repetidas
+BFS desde cada estación por separado.
 
-El enunciado dice distintas. Si duplicaras, `d[s]==0` ya puesto evita reencolar.
+## El código que pasa (C++)
 
-## Complejidad
-
-$O(n+m)$.
-
-## Trampas
-
-- BFS desde cada estación.
-- Dijkstra (innecesario).
-- No imprimir $n$ números (uno por nodo, `-1` incluidos).
-- Nodo estación: distancia $0$, no $-1`.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-vector<int> d(n + 1, -1);
-queue<int> q;
-for (int s : src) { d[s] = 0; q.push(s); }
-while (!q.empty()) {
-    int u = q.front(); q.pop();
-    for (int v : g[u]) if (d[v] == -1) {
-        d[v] = d[u] + 1;
-        q.push(v);
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n,m,k; cin>>n>>m>>k;
+    vector<int> src(k);
+    for (int i=0;i<k;++i) cin>>src[i];
+    vector<vector<int>> g(n+1);
+    for (int i=0;i<m;++i) {
+        int u,v; cin>>u>>v;
+        g[u].push_back(v); g[v].push_back(u);
     }
+    vector<int> d(n+1, -1);
+    queue<int> q;
+    for (int s: src) { d[s]=0; q.push(s); }
+    while (!q.empty()) {
+        int u=q.front(); q.pop();
+        for (int v: g[u]) if (d[v]==-1) { d[v]=d[u]+1; q.push(v); }
+    }
+    for (int i=1;i<=n;++i) {
+        if (i>1) cout<<" ";
+        cout<<d[i];
+    }
+    cout<<"\n";
+    return 0;
 }
 ```

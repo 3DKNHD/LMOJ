@@ -1,6 +1,6 @@
 {
   "code": "subarray-tope",
-  "name": "Subarreglo con tope",
+  "name": "El tramo del viaje",
   "points": 6,
   "timeLimit": 1.5,
   "memoryLimit": 256,

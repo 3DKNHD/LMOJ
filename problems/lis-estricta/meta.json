@@ -1,6 +1,6 @@
 {
   "code": "lis-estricta",
-  "name": "Subsecuencia creciente",
+  "name": "La colección creciente",
   "points": 8,
   "timeLimit": 2.0,
   "memoryLimit": 256,

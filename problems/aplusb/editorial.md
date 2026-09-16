@@ -1,46 +1,71 @@
-# Editorial: A más B
+# Editorial: Las dos facturas
 
-## Qué pide
+## Qué hay que hacer
 
-$T$ consultas independientes. En cada una te dan $A$ y $B$ y debes imprimir $A+B$ en su propia línea.
+Te dan muchas parejas de números. En cada pareja hay que sumar los dos e imprimir el resultado en su propia línea.
 
-## Idea
+No hay algoritmo escondido. Hay que cuidar dos cosas: **leer la entrada rápido** y **usar enteros de 64 bits**.
 
-No hay algoritmo escondido: lees $T$ y, por cada caso, lees dos enteros, los sumas y los imprimes. El problema existe para entrenar **I/O rápido** y **enteros de 64 bits**.
+## Cómo se resuelve, paso por paso
 
-## Por qué 64 bits
+1. Lee un número $T$. Eso es cuántas ventas hay.
+2. Repite $T$ veces:
+   - Lee dos números $A$ y $B$.
+   - Calcula $A+B$.
+   - Imprime ese número y un salto de línea.
+3. No guardes las $T$ sumas en un arreglo. Imprime en el momento y listo.
 
-Los límites son $-10^{18} \le A,B \le 10^{18}$. Entonces:
+## Un ejemplo a mano
 
-- El peor valor de $A+B$ es $2 \cdot 10^{18}$, que **sí cabe** en un `long long` ($\approx 9 \cdot 10^{18}$).
-- Un `int` de 32 bits llega solo hasta $\approx 2 \cdot 10^9$. $10^{18}+10^{18}$ se desborda y da basura (WA silencioso).
+Entrada:
 
-En C++ usa `long long`. En Python los `int` ya son arbitrarios, así que la suma es correcta sola.
+```
+3
+2 3
+-1 1
+1000000000000000000 1000000000000000000
+```
 
-## Por qué hay que leer rápido
+- $2+3=5$
+- $-1+1=0$
+- $10^{18}+10^{18}=2\cdot 10^{18}$
 
-$T$ llega a $10^5$. Si usas `cin` sin desactivar sync, o `print` de Python línea a línea sin buffer, puedes llevar **TLE** aun con un algoritmo $O(T)$.
+Salida:
 
-En C++:
+```
+5
+0
+2000000000000000000
+```
+
+## Enteros grandes (`long long`)
+
+En C++ el tipo `int` llega como máximo a unos $2\cdot 10^9$. $A$ y $B$ pueden ser $10^{18}$. Su suma puede ser $2\cdot 10^{18}$. Eso **no cabe** en `int`. C++ no avisa: guarda un valor incorrecto y el juez da WA.
+
+El tipo `long long` llega hasta unos $9\cdot 10^{18}$. Úsalo cuando el enunciado hable de $10^{18}$.
+
+En Python los enteros crecen solos. Ahí el problema es otro: imprimir lento.
+
+## Por qué te puede dar TLE
+
+Hasta $10^5$ líneas. Si cada lectura es lenta, se te acaba el segundo. En C++ pon esto **una vez**, al arrancar:
 
 ```cpp
 ios::sync_with_stdio(false);
 cin.tie(nullptr);
 ```
 
-En Python conviene leer todo de una vez (`sys.stdin.buffer.read`) o al menos usar `sys.stdin.readline`.
+Eso le dice a C++ que no se sincronice con `scanf` en cada número.
 
-## Otras soluciones
+## Si te da WA
 
-Todas son equivalentes: un `for` de $T$ pasos. No hace falta guardar las $T$ sumas en un arreglo; puedes imprimir al vuelo y ahorrar memoria.
+- Usaste `int` en vez de `long long`.
+- Imprimiste todo pegado, sin `\n`.
+- Leíste un par de más o de menos.
 
-## Trampas
+## El código que pasa (C++)
 
-- Declarar `int a, b` en C++.
-- Olvidar el salto de línea entre respuestas.
-- Leer $T$ y después intentar leer $T+1$ pares.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -56,5 +81,6 @@ int main() {
         cin >> a >> b;
         cout << a + b << "\n";
     }
+    return 0;
 }
 ```

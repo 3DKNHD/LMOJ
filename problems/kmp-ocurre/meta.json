@@ -1,6 +1,6 @@
 {
   "code": "kmp-ocurre",
-  "name": "Ocurrencias del patrón",
+  "name": "El estribillo",
   "points": 8,
   "timeLimit": 2.0,
   "memoryLimit": 256,

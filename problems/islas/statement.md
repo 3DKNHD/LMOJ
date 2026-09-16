@@ -1,8 +1,10 @@
-# Islas de puntos
+# Tierra y mar
 
-Tienes una grilla $n \times m$ de `.` (tierra) y `#` (agua). Una **isla** es un grupo 4-conectado de `.` (arriba/abajo/izquierda/derecha, no diagonales). Cuenta las islas.
+Tienes un mapa rectangular de $n$ filas por $m$ columnas. Cada celda es `.` (tierra) o `#` (agua).
 
-No uses DFS recursivo en $1000 \times 1000$: el stack se muere. BFS o DFS iterativo.
+Una **isla** es un conjunto maximal de celdas de tierra donde puedes ir de cualquiera a cualquiera pisando solo tierra y moviéndote en cruz: arriba, abajo, izquierda, derecha. **Las diagonales no cuentan**: dos tierras que se tocan solo por una esquina son islas distintas. El agua no se camina.
+
+El mapa puede ser grande y tener muchas islas, o ser todo mar (entonces la respuesta es $0$). Cuenta las islas.
 
 ## Entrada
 

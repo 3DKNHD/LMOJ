@@ -1,6 +1,8 @@
-# Al revés
+# La cinta al revés
 
-Imprime los $n$ enteros en orden inverso.
+Grabaste $n$ tomas de un corto, una detrás de otra, en el orden en que se filmó. El editor, que tiene sus manías, quiere oírlas **de la última a la primera**: primero el plano con el que cerraron el día, al final el que abrió la mañana.
+
+Las tomas están numeradas con enteros (identificadores internos, pueden ser negativos). Tienes que devolver esa misma secuencia, invertida, en una sola línea y separada por espacios.
 
 ## Entrada
 

@@ -1,41 +1,56 @@
-# Editorial: Mochila 0/1
+# Editorial: El bolso de la olimpiada
 
-## Qué pide
+## Qué hay que hacer
 
-Cada objeto **a lo sumo una vez**. Máximo valor con capacidad $W$. $n\cdot W \le 10^7$. Valores en 64 bits.
+$n$ objetos, cada uno **como máximo una vez**. Capacidad $W$. Máximo valor.
 
-## Idea
+## DP de una dimensión, de atrás para adelante
 
-`dp[j]` = mejor valor con capacidad exacta $\le j$ (el oficial usa capacidad $\le j$ implícita al tomar `max` hacia $W$).
+`dp[j]` = mejor valor usando **capacidad exactamente hasta $j$**.
 
-Para cada objeto $(w,v)$, recorre $j$ **de $W$ bajando hasta $w$**:
+Por cada objeto $(w,v)$:
 
-```text
-dp[j] = max(dp[j], dp[j-w] + v)
+```
+for j = W; j >= w; j--
+    dp[j] = max(dp[j], dp[j-w] + v)
 ```
 
-Al ir hacia atrás, `dp[j-w]` **aún no** incluye este objeto: no lo usas dos veces.
+¿Por qué para atrás? `dp[j-w]` todavía **no** incluye este objeto. Si recorrieras $j$ para adelante, podrías usar el mismo objeto mil veces (eso es el otro problema, el de las monedas).
 
-## Contrastar con monedas
+`dp` en `long long`: $100 \times 10^9$.
 
-Unbounded recorre $j$ hacia **adelante**. 0/1 hacia **atrás**. Es el único cambio de dirección que cambia el problema.
+## Ejemplo
 
-## Complejidad
+$W=5$, objetos $(2,3)$ y $(3,4)$.
 
-$O(nW)$. Un `dp[n][W]` 2D también, pero $100\times 10^5$ enteros 64-bit pesan; 1D basta.
+Después del primero: capacidad $2..5$ valen $3$.
+Después del segundo: `dp[5]=max(3, dp[2]+4)=7`, `dp[3]=4`. Respuesta $7$.
 
-## Trampas
+## Si te da WA
 
-- Recorrer $j$ creciente: usas el objeto varias veces (unbounded).
-- `int` en `v` y `dp` ($100\cdot 10^9$).
-- Capacidad `j >= w` mal (olvidar el objeto si $w=W$).
+Loop creciente (unbounded). `int` en `dp`.
 
-## Código de referencia (C++)
+## El código que pasa (C++)
+
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-vector<ll> dp(W + 1, 0);
-for (cada objeto w, v)
-    for (int j = W; j >= w; --j)
-        dp[j] = max(dp[j], dp[j - w] + v);
-cout << dp[W] << "\n";
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n, W;
+    cin >> n >> W;
+    vector<ll> dp(W + 1, 0);
+    for (int i = 0; i < n; ++i) {
+        int w; ll v;
+        cin >> w >> v;
+        for (int j = W; j >= w; --j) dp[j] = max(dp[j], dp[j - w] + v);
+    }
+    cout << dp[W] << "\n";
+    return 0;
+}
 ```

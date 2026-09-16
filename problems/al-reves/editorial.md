@@ -1,52 +1,39 @@
-# Editorial: Al revés
+# Editorial: La cinta al revés
 
-## Qué pide
+## Qué hay que hacer
 
-Los $n$ enteros en orden inverso, en una sola línea, separados por espacios.
+Te dan una fila de números. Los tienes que imprimir al revés: el último primero, el primero último.
 
-## Idea
+Es como una pila de platos: El último que pones es el primero que sale.
 
-Lees el arreglo y lo escribes de atrás hacia adelante. $O(n)$ tiempo y $O(n)$ memoria.
+## Paso a paso
 
-## Por qué guardar el arreglo
+1. Lee $n$.
+2. Guarda los $n$ números en un arreglo $a[0] … a[n-1]$. Aquí sí hace falta guardarlos, porque el primero que lees es el último que imprimes.
+3. Recorre el arreglo **de atrás hacia adelante**: `i = n-1, n-2, …, 0`.
+4. Imprime `a[i]` separado por espacios, y al final un salto de línea.
 
-Para imprimir $a_n$ primero necesitas haber leído $a_n$. Con entrada secuencial no hay otra: hay que almacenar (o usar una pila).
+## Ejemplo
 
-```text
-entrada:  1 2 3 4
-salida:   4 3 2 1
-```
+Entrada: `n=5` y `1 2 3 4 5`.
 
-## Espacios
+En el arreglo: posiciones $0..4$ tienen $1,2,3,4,5$.
 
-El formato típico que aceptan los jueces:
+Imprime desde $4$ hasta $0$: $5 4 3 2 1$.
 
-```cpp
-for (int i = n - 1; i >= 0; --i) {
-    if (i != n - 1) cout << ' ';
-    cout << a[i];
-}
-cout << '\n';
-```
+## El espacio entre medio
 
-Un espacio de más al final a veces pasa, a veces no. Aquí lo seguro es no dejar espacio colgante, o imprimir `a[i] << " \n"[i==0]`.
+Si imprimes un espacio **después** de cada número, te queda un espacio de más al final. Algunos jueces lo aceptan, otros no. El oficial pone el espacio **antes** de cada número excepto el primero.
 
-## Otras soluciones
+## Si te da WA
 
-- `reverse(a.begin(), a.end())` y luego imprimir en orden. Igual de bien.
-- Recursión “imprime el resto y luego el actual” revienta el stack.
-- Insertar al frente de un `vector` en cada lectura es $O(n^2)$: TLE.
+- Imprimiste en el mismo orden que leíste.
+- Te comiste el último o el primero.
+- Pusiste saltos de línea en vez de espacios (el enunciado pide **una** línea).
 
-## Complejidad
+## El código que pasa (C++)
 
-$O(n)$ tiempo y memoria. $2 \cdot 10^5$ enteros caben.
-
-## Trampas
-
-- Invertir solo a medias (`i` de $n$ a $1$ pero índices 0-based mal).
-- Imprimir un número por línea (el enunciado pide **una** línea).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -60,9 +47,10 @@ int main() {
     vector<long long> a(n);
     for (int i = 0; i < n; ++i) cin >> a[i];
     for (int i = n - 1; i >= 0; --i) {
-        if (i != n - 1) cout << ' ';
+        if (i + 1 != n) cout << " ";
         cout << a[i];
     }
     cout << "\n";
+    return 0;
 }
 ```

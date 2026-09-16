@@ -1,38 +1,65 @@
-# Editorial: Del S al E
+# Editorial: Del patio al aula
 
-## Qué pide
+## Qué hay que hacer
 
-Grilla, 4-conectado, `#` muro. Distancia mínima en pasos de `S` a `E`, o $-1$. $n,m\le 1000$.
+Grilla. `S` inicio, `E` fin, `#` pared, `.` piso. Pasos en cruz. Distancia mínima o `-1`.
 
-## Idea
+Es el mismo BFS de “Hasta la sala $n$”, pero las “salas” son celdas.
 
-BFS desde `S`. Primera vez que tocas `E` es el camino más corto en número de pasos (todas las aristas pesan $1$). `S` y `E` son celdas transitables.
+## Paso a paso
 
-`dist = -1` marca no visitado. Muros no se encolan.
+1. Lee la grilla. Busca dónde está `S` y `E`.
+2. `dist` todo `-1`. `dist[S] = 0`. Cola con `S`.
+3. Vecinos: $\pm 1$ en fila o columna. Si te salís, si es $#$, o si ya tiene dist, skip.
+4. `dist[vecino] = dist[actual]+1`.
+5. Imprime `dist[E]`.
 
-## Por qué no DFS
+`S` y `E` se caminan (no son pared).
 
-DFS encuentra *un* camino, no el más corto. En una grilla puede dar un paseo enorme.
+## Si te da WA
 
-## Complejidad
+Diagonales. DFS. Tratar `E` como pared.
 
-$O(nm)$. Cada celda una vez.
+## El código que pasa (C++)
 
-## DFS recursivo
-
-Aunque no sea óptimo, además revienta el stack en $10^6$ celdas. BFS con `queue`.
-
-## Trampas
-
-- Diagonales (8 vecinos).
-- No poder pisar `E` (tratarlo como muro).
-- `S==E`: distancia $0$ (el oficial pone `dist[S]=0`).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-dist[sr][sc] = 0;
-q.push({sr, sc});
-// vecinos 4, skip # y dist!=-1
-cout << dist[er][ec] << "\n";  // -1 si no se alcanzó
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n, m;
+    cin >> n >> m;
+    vector<string> g(n);
+    for (int i = 0; i < n; ++i) cin >> g[i];
+    int sr = 0, sc = 0, er = 0, ec = 0;
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < m; ++j) {
+            if (g[i][j] == 'S') sr = i, sc = j;
+            if (g[i][j] == 'E') er = i, ec = j;
+        }
+    const int dr[4] = {-1, 1, 0, 0};
+    const int dc[4] = {0, 0, -1, 1};
+    vector<vector<int>> dist(n, vector<int>(m, -1));
+    queue<pair<int, int>> q;
+    dist[sr][sc] = 0;
+    q.push({sr, sc});
+    while (!q.empty()) {
+        auto [r, c] = q.front();
+        q.pop();
+        for (int k = 0; k < 4; ++k) {
+            int nr = r + dr[k], nc = c + dc[k];
+            if (nr < 0 || nc < 0 || nr >= n || nc >= m) continue;
+            if (g[nr][nc] == '#' || dist[nr][nc] != -1) continue;
+            dist[nr][nc] = dist[r][c] + 1;
+            q.push({nr, nc});
+        }
+    }
+    cout << dist[er][ec] << "\n";
+    return 0;
+}
 ```

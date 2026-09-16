@@ -1,48 +1,45 @@
-# Editorial: Dentro del rango
+# Editorial: En el presupuesto
 
-## Qué pide
+## Qué hay que hacer
 
-Cuántos $a_i$ cumplen $L \le a_i \le R$. El intervalo es **cerrado**: $L$ y $R$ sí cuentan.
+Te dan un intervalo cerrado $[L, R]$: “desde $L$ hasta $R$, **incluyendo** los dos extremos”. Después una lista. Cuenta cuántos de la lista caen adentro.
 
-## Idea
+“Cerrado” quiere decir: si el número es exactamente $L$ o exactamente $R$, **cuenta**.
 
-Un contador. Por cada $a_i$, si está entre $L$ y $R$ (inclusive), sumas $1$. No hace falta guardar los que sí entran.
+## Paso a paso
 
-## Por qué no ordenar
+1. Lee $n$, $L$ y $R$.
+2. `ans = 0`.
+3. Por cada $x$: si $L \le x$ **y** $x \le R$, sumas uno.
+4. Imprime `ans`.
 
-Ordenar y luego lower/upper bound también funciona y es $O(n \log n)$. Con $n \le 2 \cdot 10^5$ entra, pero es más código y no aporta. El chequeo directo es $O(n)$ y obvio.
+En código:
 
-## Inclusivo
+```cpp
+if (L <= x && x <= R) ++ans;
+```
 
-$[L, R]$ significa:
+Las dos condiciones. Si pones solo una, estás contando de más o de menos.
 
-- $a_i = L$ **sí**
-- $a_i = R$ **sí**
-- $a_i = L-1$ no
-- $a_i = R+1$ no
+## Ejemplo
 
-El bug `L < a_i < R` (extremos abiertos) falla en cuanto hay un valor igual a $L$ o $R$. El juez mete esos casos.
+$L=3$, $R=7$, lista $1,\ 3,\ 5,\ 7,\ 8$.
 
-También te garantizan $L \le R$, así que no hay que invertir el intervalo.
+- $1$ no
+- $3$ sí (es el borde)
+- $5$ sí
+- $7$ sí (el otro borde)
+- $8$ no
 
-## Negativos
+Respuesta: $3$.
 
-$L$, $R$ y $a_i$ llegan a $-10^9$. Comparar enteros con `<=` funciona igual en negativos. No uses `unsigned`.
+## Si te da WA
 
-## Complejidad
+Usaste $<$ en vez de $\le$ y te comiste los bordes. O te mezclaste $L$ y $R$.
 
-$O(n)$. El contador cabe en `int` ($n \le 2 \cdot 10^5$).
+## El código que pasa (C++)
 
-## Otras soluciones
-
-Si más adelante ves **muchas** consultas $[L,R]$ sobre el mismo arreglo, ahí sí ordenas una vez y binarias. Aquí hay **un solo** intervalo.
-
-## Trampas
-
-- Comparación estricta.
-- Leer $n$, $L$, $R$ en líneas separadas (van en la **primera** línea, los $a_i$ en la segunda).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -61,5 +58,6 @@ int main() {
         if (L <= x && x <= R) ++ans;
     }
     cout << ans << "\n";
+    return 0;
 }
 ```

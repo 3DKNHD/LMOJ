@@ -1,49 +1,45 @@
-# Editorial: Sesiones sin choque
+# Editorial: Un solo aula
 
-## Qué pide
+## Qué hay que hacer
 
-Máximo número de intervalos **cerrados** $[L,R]$ que no se pisan. Si uno termina en $t$ y otro empieza en $t$, **chocan**. $n \le 2\cdot 10^5$.
+Tienes un aula y un montón de talleres con hora de inicio y fin. Quieres meter **la mayor cantidad** posible sin que se pisen. Si uno termina en el minuto $t$ y otro empieza en $t$, chocan (el aula no se clona).
 
-## Idea
+## La idea greedy (voraz: siempre eliges lo que parece mejor, y aquí sí funciona)
 
-Greedy clásico de *activity selection*: ordena por **tiempo de fin** creciente y toma una sesión si su $L$ es **estrictamente mayor** que el fin de la última tomada.
+Ordena los talleres por **quién termina antes**. Vas tomando el que termina más pronto, siempre que empiece **después** de que se liberó el aula.
 
-Por qué greedy: entre todas las soluciones óptimas, existe una que incluye la actividad que termina primero (si no, reemplazas la primera de la óptima por esa: termina antes o igual y no empeora el resto). Inducción en el resto.
+¿Por qué funciona? El que termina antes deja el aula libre cuanto antes, así entra más gente después. Si en vez de ese tomas uno que termina tarde, estás ocupando el aula sin necesidad.
 
-## Por qué $L > last$, no $L \ge last$
+## Paso a paso
 
-Intervalos cerrados. $[1,5]$ y $[5,8]$ comparten el instante $5$. Si usas `>=`, las cuentas como compatibles: WA.
+1. Guarda cada taller como `(fin, inicio)`.
+2. Ordena de menor a mayor por `fin`.
+3. `last = un número muy pequeño` (el aula está libre desde siempre).
+4. Por cada taller en ese orden: si `inicio > last`, lo tomas, `ans++`, `last = fin`.
+5. Imprime `ans`.
 
-El oficial guarda `last` = $R$ de la última aceptada, y exige `l > last`.
+El `>` (no `>=`) es porque si `inicio == last` chocan.
 
-## Cómo guardar los pares
+## Ejemplo
 
-Ordenar por $R$. El oficial mete `(R, L)` en el `pair` para que `sort` use el primer campo:
+Talleres $[1,3], [2,5], [4,7], [6,8]$.
 
-```cpp
-cin >> a[i].second >> a[i].first;  // L, R → pair es (R, L)
-sort(a.begin(), a.end());
-```
+Orden por fin: $[1,3], [2,5], [4,7], [6,8]$.
 
-Si hay empate en $R$, da igual el $L$ para la corrección del greedy estándar (el que termina igual: tomar el de $L$ más grande no cambia el invariante de “terminar lo antes posible” entre iguales; ambas variantes dan óptimo).
+- Tomo $[1,3]$, last$=3$.
+- $[2,5]$ empieza $2$, no es $>3$.
+- $[4,7]$ empieza $4>3$: tomo, last$=7$.
+- $[6,8]$ $6>7$? no.
 
-## Complejidad
+Respuesta: $2$.
 
-$O(n \log n)$ por el sort, $O(n)$ del barrido. Memoria $O(n)$.
+## Si te da WA
 
-## Otras soluciones
+Ordenaste por inicio. O usaste `>=` y metiste dos que se tocan en $t$.
 
-- DP $O(n^2)$: TLE.
-- Ordenar por $L$: **no** es óptimo. Contraejemplo típico: $[1,100]$, $[2,3]$, $[4,5]$. Por $L$ tomas el largo y te quedas con $1$; por $R$ tomas los dos cortos.
-- Sweep line con “máximo de activos” resuelve **pico de cobertura**, no este problema (aquí quieres un subconjunto independiente máximo, no el máximo solape).
+## El código que pasa (C++)
 
-## Trampas
-
-- Tratar toque en un punto como compatible.
-- Greedy por inicio o por duración.
-- `int last` y $R=10^9$ está bien; el oficial usa `long long` de centinela inicial $-(2^{60})$.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -66,5 +62,6 @@ int main() {
         }
     }
     cout << ans << "\n";
+    return 0;
 }
 ```

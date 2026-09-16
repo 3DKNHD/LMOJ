@@ -1,55 +1,38 @@
-# Editorial: ¿Misma red?
+# Editorial: Cables del lab
 
-## Qué pide
+## Qué hay que hacer
 
-Grafo no dirigido con $n \le 2\cdot 10^5$, $m$ cables, $q$ preguntas “¿$u$ y $v$ están en la misma componente?”. Un nodo está en la misma red que sí mismo. Puede haber bucles y aristas repetidas.
+PCs y cables. Pregunta: ¿puedo ir de $u$ a $v$ tocando cables? Una PC se alcanza a sí misma siempre ($SI$).
 
-## Idea
+## La idea: conjuntos disjuntos (DSU)
 
-Union-Find (DSU). Cada componente es un árbol de padres. `find(x)` sube hasta la raíz (con path compression). `unite(a,b)` cuelga la raíz más chica (por rango) de la otra.
+Cada computadora empieza en su propio grupo. El grupo tiene un **representante**. Cuando hay un cable entre $a$ y $b$, se unen los dos grupos: el representante de uno pasa a depender del otro.
 
-Tras procesar las $m$ aristas, $u$ y $v$ están conectados sii `find(u) == find(v)`.
+Dos computadoras están en la misma red si y solo si tienen el **mismo representante**.
 
-## Por qué DSU y no BFS en cada query
+## Cómo hallar el representante (`find`)
 
-$q$ también es $2\cdot 10^5$. BFS por pregunta es $O(q(n+m))$: muerto. Alternativa válida: **una** DFS/BFS para etiquetar componentes (`comp[u] = id`) en $O(n+m)$, luego cada query es `comp[u]==comp[v]`. Eso también es $O(n+m+q)$ y está perfecto.
+Si `p[x] == x`, $x$ es el representante. Si no, sigue a `p[x]`, luego al siguiente, hasta llegar a uno que se apunta a sí mismo.
 
-DSU es más cómodo si más adelante el grafo crece online. Aquí las aristas llegan **antes** de las queries, así que ambas sirven.
+Al volver, se puede hacer que todos los nodos del camino apunten directo al representante. Así la próxima búsqueda es más corta.
 
-## Path compression + union by rank
+## Cómo unir (`unite`)
 
-Sin ellos, `find` puede ser $O(n)$ y $m$ uniones $O(nm)$. Con ambos, $\approx O(\alpha(n))$ por operación, casi $O(1)$. El oficial:
+Halla el representante de $a$ y el de $b$. Si ya son el mismo, no hagas nada. Si no, cuelga uno del otro. El código oficial cuelga el grupo más bajo del más alto (por “rango”) para que la cadena no crezca demasiado.
 
-```cpp
-int find(int x) { return p[x] == x ? x : p[x] = find(p[x]); }
-```
+## Preguntas
 
-y compara `r[a], r[b]` al unir.
+Después de leer **todos** los cables (el grafo no cambia), por cada $u,v$: $find(u)==find(v)$ → `SI` si no `NO`.
 
-## Bucles y repetidas
+## Si te da WA / TLE
 
-`unite(u,u)`: `find` igual, return. Arista doble: segunda `unite` no hace nada. Correcto.
+- BFS por pregunta: $q$ veces el grafo, TLE.
+- `u` y `u` contestaste `NO`.
+- Uniste mal y mezclaste redes.
 
-## $u = v$ en una query
+## El código que pasa (C++)
 
-Misma raíz. `SI`. El enunciado lo pide explícitamente.
-
-## Complejidad
-
-$O((n+m+q)\,\alpha(n))$. Memoria $O(n)$.
-
-## Otras soluciones
-
-- BFS/DFS de componentes + color.
-- Lista de adyacencia + `visited` por query: TLE.
-
-## Trampas
-
-- Imprimir `YES` en vez de `SI`.
-- Indexar DSU en $0..n-1$ y leer nodos $1..n$.
-- DFS recursivo en una estrella de $2\cdot 10^5$: stack overflow; DSU o BFS no tienen ese problema.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -85,5 +68,6 @@ int main() {
         cin >> u >> v;
         cout << (d.find(u) == d.find(v) ? "SI" : "NO") << "\n";
     }
+    return 0;
 }
 ```

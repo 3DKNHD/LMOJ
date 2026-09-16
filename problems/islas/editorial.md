@@ -1,47 +1,43 @@
-# Editorial: Islas de puntos
+# Editorial: Tierra y mar
 
-## Qué pide
+## Qué hay que hacer
 
-Grilla $n\times m$ ($n,m\le 1000$) de `.` tierra y `#` agua. Cuántas componentes 4-conectadas de `.` (no diagonales).
+El mapa es un rectángulo de tierra `.` y agua `#`. Una isla es un grupo de tierra donde puedes caminar en cruz (arriba/abajo/izq/der). **No en diagonal**.
 
-## Idea
+Cada grupo cuenta $1$. Tierra suelta: isla de una celda. Todo agua: $0$.
 
-Cada isla es una componente conexa. Recorres celdas; cuando ves un `.` no visitado, sumas $1$ y **inundas** toda la isla (BFS o DFS iterativo).
+## Cómo contarlas
 
-4 direcciones: $(-1,0),(1,0),(0,-1),(0,1)$.
+Recorre todas las celdas. Cada vez que ves un `.` que **todavía no visitaste**, encontraste una isla nueva: `ans++`, y **pintas** toda esa isla para no contarla de nuevo.
+
+Pintar = BFS (cola):
+
+1. Mete la celda en la cola y marcala visitada **ya**.
+2. Mientras la cola tenga algo: saca la de adelante, mira los $4$ vecinos.
+3. Si el vecino es `.`, está dentro del mapa, y no está visitado: marcalo y encolalo.
+
+Marcar **al encolar** (no al sacar) evita meter la misma celda mil veces.
 
 ## Por qué no DFS recursivo
 
-Una isla puede ser $1000\times 1000 = 10^6$ celdas. DFS recursivo usa $O(\text{tamaño})$ de stack de C++ y en muchos jueces muere (`SIGSEGV`). BFS con `queue` o DFS con `vector` como pila viven en el heap.
+Una isla puede tener $1000\times 1000$ celdas. Cada llamada recursiva come stack. En muchos sistemas eso es SIGSEGV (el programa se cae). La cola vive en el heap y aguanta.
 
-El oficial es BFS: al descubrir la celda la marcas visitada **antes** de encolar, para no encolarla mil veces.
+## Ejemplo
 
-## Complejidad
+```
+.##
+#..
+```
 
-Cada celda se visita $O(1)$ veces. $O(nm)$ tiempo y memoria. $10^6$ está bien.
+Tres tierras: $(0,0)$ sola, y $(1,1)-(1,2)$ juntas. Las de la esquina $(0,0)$ y $(1,1)$ se tocan en diagonal → **dos** islas distintas. Total $2$.
 
-## Diagonales
+## Si te da WA
 
-Dos `.` en diagonal **no** son la misma isla. Si pones 8 vecinos, unes de más.
+8 vecinos. O no marcar visitado y contar la misma isla mil veces. O DFS recursivo (SE/RTE).
 
-## Bordes
+## El código que pasa (C++)
 
-Chequea `nr,nc` dentro de $[0,n)\times[0,m)$. El agua `#` no se visita.
-
-## Otras soluciones
-
-- DFS iterativo: equivalente.
-- DSU en celdas de tierra, uniendo vecinos `.`: $O(nm\alpha)$. Más código.
-- Flood fill recursivo con `ulimit` enorme: no lo hagas.
-
-## Trampas
-
-- DFS de sistema.
-- 8-conectividad.
-- Leer la grilla con `cin >> char` mezclando espacios (aquí cada fila es un `string` sin espacios).
-- No marcar visitado al encolar: la cola explota.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -79,5 +75,6 @@ int main() {
         }
     }
     cout << ans << "\n";
+    return 0;
 }
 ```

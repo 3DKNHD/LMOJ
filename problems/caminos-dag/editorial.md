@@ -1,50 +1,55 @@
-# Editorial: Caminos en DAG
+# Editorial: Senderos hacia el auditorio
 
-## Qué pide
+## Qué hay que hacer
 
-Número de caminos $1\rightsquigarrow n$ módulo $10^9+7$ en un DAG. `dp[1]=1`. El pack no mete ciclos.
+Calles de **un solo sentido**, **sin ciclos**. Caminos de $1$ a $n$, módulo $10^9+7$. Quedarte en $1$ cuando $n=1$ cuenta $1$.
 
-## Idea
+## DP en orden topológico
 
-$dp[v]$ = número de formas de llegar de $1$ a $v$. Para cada arco $u\to v$:
+`dp[v]` = formas de llegar a $v$ desde $1$. `dp[1]=1`. El resto $0$.
 
-$$
-dp[v] \leftarrow (dp[v] + dp[u]) \bmod M
-$$
+Procesa los nodos en un orden donde $u$ aparece **antes** que $v$ si hay arco $u\to v$ (Kahn: cola de indeg $0$).
 
-Hay que procesar $u$ **antes** que $v$: orden topológico (Kahn). `dp[1]=1` de entrada; si $1$ no tiene arcos salientes y $n\neq 1$, $dp[n]=0$.
+Cuando procesas $u$, para cada salida $v$: $dp[v] += dp[u]$ (con módulo).
 
-## Por qué toposort
+Si nunca llega nada a $n$, $dp[n]$ quedó $0$.
 
-Si procesas en orden arbitrario, usas $dp[u]$ incompleto. En un DAG el toposort existe. El generador garantiza aciclicidad; si hubiera ciclo, Kahn no vacía la cola y $dp[n]$ quedaría corto.
+## Si te da WA
 
-## $n=1$
+DFS recursivo sin orden: puedes contar dos veces o usar `dp[v]` antes de estar listo. Olvidar el módulo.
 
-`dp[1]=1`, cero arcos: $1$ camino “vacío” (el nodo solo). Suele ser la convención pedida.
+## El código que pasa (C++)
 
-## Complejidad
-
-$O(n+m)$.
-
-## DFS + memo
-
-`f(v)` = suma `f(u)` sobre arcos a $v$, o al revés desde $1$ hacia vecinos. Cuidado con el stack. Kahn es iterativo.
-
-## Trampas
-
-- No modular.
-- `dp[1]=0`.
-- Contar caminos **simples** vs todas las walks: en DAG no hay ciclos, coinciden.
-- Grafos con aristas a $1$ que inflan `dp[1]` si las procesas encima del $1$ inicial (el pack parte $1$ como fuente).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-dp[1] = 1;
-// Kahn
-for (int v : g[u]) {
-    dp[v] = (dp[v] + dp[u]) % MOD;
-    if (--indeg[v] == 0) q.push(v);
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+const ll MOD=1000000007LL;
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n,m; cin>>n>>m;
+    vector<vector<int>> g(n+1);
+    vector<int> indeg(n+1);
+    for (int i=0;i<m;++i) {
+        int u,v; cin>>u>>v;
+        g[u].push_back(v); indeg[v]++;
+    }
+    queue<int> q;
+    for (int i=1;i<=n;++i) if (!indeg[i]) q.push(i);
+    vector<ll> dp(n+1,0);
+    dp[1]=1;
+    while (!q.empty()) {
+        int u=q.front(); q.pop();
+        for (int v: g[u]) {
+            dp[v]=(dp[v]+dp[u])%MOD;
+            if (--indeg[v]==0) q.push(v);
+        }
+    }
+    cout << dp[n] << "\n";
+    return 0;
 }
-cout << dp[n] << "\n";
 ```

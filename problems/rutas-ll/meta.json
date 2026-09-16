@@ -1,6 +1,6 @@
 {
   "code": "rutas-ll",
-  "name": "Rutas con peso",
+  "name": "El colectivo más barato",
   "points": 8,
   "timeLimit": 2.0,
   "memoryLimit": 256,

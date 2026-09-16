@@ -1,41 +1,56 @@
-# Editorial: Diámetro del árbol
+# Editorial: Los dos pueblos más lejanos
 
-## Qué pide
+## Qué hay que hacer
 
-Máxima distancia (aristas) entre dos nodos de un **árbol**. $n\le 2\cdot 10^5$.
+Un árbol: $n$ pueblos, $n-1$ caminos, sin ciclos, todo conectado. El diámetro es la pareja más lejana (en cantidad de caminos).
 
-## Idea
+## Dos BFS, no $n$
 
-Dos BFS:
+Un hecho útil: toma cualquier pueblo $s$. Busca el más lejano $u$. Desde $u$, busca el más lejano $v$. La distancia $u$–$v$ **es** el diámetro.
 
-1. Desde un nodo cualquiera (p.ej. $1$), halla el más lejano $u$.
-2. Desde $u$, halla el más lejano $v$. `dist(u,v)` es el diámetro.
+Intuición: $u$ tiene que ser una “punta” del árbol. La otra punta está lo más lejos de esa.
 
-Por qué funciona en árboles: $u$ es un extremo de algún diámetro. (Si el diámetro fuera $a$–$b$ y $u$ no estuviera en él, el camino de $1$ a $u$ contradice maximalidad; prueba estándar por casos.)
+BFS = distancia cuando cada arista vale $1$ (cola, como siempre).
 
-En grafos con ciclos **no** vale.
+Si $n=1$, $0$.
 
-## $n=1$
+## Si te da WA
 
-Diámetro $0$. BFS desde $1$: farthest es $1$, dist $0$.
+Mediste desde el nodo $1$ y te quedaste con eso (el $1$ puede estar en el medio).
 
-## Complejidad
+## El código que pasa (C++)
 
-$O(n)$. Dos recorridos.
-
-## Otras soluciones
-
-DP en raíces: `altura` y `mejor combinación de dos hijos`. $O(n)$, más código. Tree-DP útil si hay pesos.
-
-## Trampas
-
-- Un solo BFS desde $1$ (el más lejano desde $1$ no es el diámetro si $1$ está “en medio”).
-- Grafo no árbol (el input es árbol: $n-1$ aristas).
-- DFS recursivo: $n=2\cdot 10^5$ cadena $\Rightarrow$ stack overflow. BFS.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-int u = farthest(1).first;
-cout << farthest(u).second << "\n";
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int n;
+vector<vector<int>> g;
+pair<int,int> farthest(int src) {
+    vector<int> d(n+1, -1);
+    queue<int> q; q.push(src); d[src]=0;
+    int best=src;
+    while (!q.empty()) {
+        int u=q.front(); q.pop();
+        if (d[u]>d[best]) best=u;
+        for (int v: g[u]) if (d[v]==-1) { d[v]=d[u]+1; q.push(v); }
+    }
+    return {best, d[best]};
+}
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cin >> n;
+    g.assign(n+1, {});
+    for (int i=0;i<n-1;++i) {
+        int u,v; cin>>u>>v;
+        g[u].push_back(v); g[v].push_back(u);
+    }
+    int u = farthest(1).first;
+    cout << farthest(u).second << "\n";
+    return 0;
+}
 ```

@@ -1,59 +1,52 @@
-# Editorial: Potencia módulo
+# Editorial: El sello
 
-## Qué pide
+## Qué hay que hacer
 
-$T$ consultas independientes: $a^b \bmod (10^9+7)$. Convención: $0^0 = 1$. $a$ y $b$ llegan a $10^{18}$.
+Quieres $a^b$ (a multiplicado por sí mismo $b$ veces) y después el resto al dividir por $10^9+7$. Ese resto es un número entre $0$ y $10^9+6$.
 
-## Idea
+$0^0$ el problema lo define como $1$. Por definición: imprime $1$.
 
-Exponenciación binaria (binpow). Escribes $b$ en binario. Si $b = \sum b_k 2^k$, entonces
+No puedes hacer un `for` de $b$ vueltas: $b$ llega a $10^{18}$. Tu programa tarda demasiado.
+
+## La idea: duplicar el exponente
+
+Mira $3^{13}$. $13$ en binario es $1101_2 = 8+4+1$. Entonces
 
 $$
-a^b = \prod_k a^{2^k}
+3^{13} = 3^8 \cdot 3^4 \cdot 3^1
 $$
 
-solo en los bits $b_k = 1$. Empiezas con `r = 1`, `base = a`, y en cada paso:
+Vas calculando $3, 3^2, 3^4, 3^8, \ldots$ (al cuadrado cada vez) y, si el bit de $b$ vale 1, multiplicas eso al resultado.
 
-- si el bit bajo de $b$ está prendido, `r = r * base % MOD`
-- `base = base * base % MOD`
-- `b >>= 1`
+Eso se llama **exponenciación binaria**. Hace $\approx 60$ pasos, no $10^{18}$.
 
-Son $O(\log b)$ multiplicaciones, no $O(b)$.
+## Paso a paso de la función
 
-## Por qué $0^0 = 1$ sale sola
+Empiezas `r = 1` (el valor 1: multiplicar por 1 no cambia el número) y `a = a % MOD` (por si $a$ es más grande que el módulo).
 
-Con `r = 1` y `while (b > 0)`, si $b = 0$ no entras al bucle y devuelves $1$. Eso cubre $0^0$ y también $a^0 = 1$ para cualquier $a$.
+Mientras $b > 0$:
 
-Si haces `if (a == 0) return 0;` te comes $0^0$ y $0^b$ con $b>0$ a la vez: WA en $0^0$.
+- Si $b$ es impar ($b & 1$), `r = r * a % MOD`.
+- `a = a * a % MOD` (pasas al siguiente cuadrado).
+- `b = b / 2` (en código `b >>= 1`).
 
-## Reducir $a$ antes
+Cuando $b$ llega a $0$, $r$ es la respuesta.
 
-$a$ puede ser $10^{18}$. Una multiplicación `a * a` sin módulo explota hasta $10^{36}$. Hay que hacer `a %= MOD` **antes** del bucle. $10^9+7$ es primo, no hace falta Euler para este problema: $b$ no se reduce módulo $\varphi(M)$ a menos que sepas lo que haces (y $0^b$ se complica). Aquí $b$ entra crudo al binpow; solo $a$ se reduce.
+Si $b=0$, el `while` no entra y devuelves $1$. Por eso $0^0$ queda $1$.
 
-`a %= MOD` con $a \ge 0$ deja $a$ en $[0, M)$. El oficial también contempla $a < 0$ por costumbre; los límites son $\ge 0$.
+## El módulo en cada cuenta
 
-## Multiplicar en 64 bits
+Si haces `r * a` sin `%`, el producto de dos números de mil millones no cabe en `long long`. Multiplica y recorta: `(r * a) % MOD`. Ambos factores deben ser `long long`; si no, C++ multiplica en 32 bits y el resultado ya está mal antes del `%`.
 
-`r * a % MOD`: `r` y `a` son $< M \approx 10^9$, el producto cabe en `long long` ($< 10^{18}$). Si usas `int`, el producto se desborda **antes** del `%`.
+## Si te da TLE / WA
 
-## Complejidad
-
-$O(T \log b)$ con $T \le 10^5$, $\log(10^{18}) \approx 60$. Entra. Un bucle `for (i=0;i<b;i++)` es TLE.
-
-## Otras soluciones
-
-- Recursivo `if (b even) sq(a^{b/2})` es lo mismo; iterativo evita stack.
-- `std::pow` de `double` pierde enteros grandes: WA.
-- Fermat $a^{b \bmod (M-1)}$ **solo** si $M \nmid a$. Falla en múltiplos de $M$ y en $0^0$. No lo uses aquí.
-
-## Trampas
-
-- No modular el producto.
+- `for (i=0;i<b;i++)` con $b$ enorme: TLE.
+- No recortar módulo en cada producto: overflow → WA.
 - Tratar $0^0$ como $0$.
-- `int` en las multiplicaciones.
-- I/O lento con $T = 10^5$.
 
-## Código de referencia (C++)
+## El código que pasa (C++)
+
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -63,6 +56,7 @@ const long long MOD = 1000000007LL;
 
 long long binpow(long long a, long long b) {
     a %= MOD;
+    if (a < 0) a += MOD;
     long long r = 1;
     while (b > 0) {
         if (b & 1) r = r * a % MOD;
@@ -82,5 +76,6 @@ int main() {
         cin >> a >> b;
         cout << binpow(a, b) << "\n";
     }
+    return 0;
 }
 ```

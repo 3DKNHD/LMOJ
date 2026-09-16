@@ -1,8 +1,8 @@
-# Pico de cobertura
+# Hora pico
 
-Hay $n$ reservas sobre una línea de tiempo $1..M$. La $i$-ésima cubre el intervalo cerrado $[L_i, R_i]$. ¿Cuál es el máximo número de reservas que coinciden en **algún** instante?
+El comedor abre $M$ minutos, numerados $1, 2, \dots, M$. Hoy hay $n$ estudiantes; el $i$-ésimo está en la fila durante el intervalo cerrado $[L_i, R_i]$, siempre dentro del horario.
 
-Usa arreglo de diferencia (las coordenadas caben en $M \le 10^6$).
+La cocinera quiere saber lo peor que le puede pasar: en el minuto más cargado, ¿cuánta gente hay a la vez? Si en ningún minuto hay nadie, la respuesta es $0$.
 
 ## Entrada
 
@@ -12,4 +12,4 @@ Siguen $n$ líneas con $L$ $R$ ($1 \le L \le R \le M$).
 
 ## Salida
 
-Un único entero: el máximo solape.
+Un único entero: el máximo de personas presentes en algún mismo minuto.

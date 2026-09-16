@@ -1,48 +1,65 @@
-# Editorial: Máximo en ventana
+# Editorial: La vitrina
 
-## Qué pide
+## Qué hay que hacer
 
-Para cada $i=1,\dots,n-k+1$, el máximo de $a_i,\dots,a_{i+k-1}$. $n\le 2\cdot 10^5$: no puedes recomputar cada ventana en $O(k)$.
+Una ventana de ancho $k$ se desliza sobre el arreglo. En cada lugar quieres el **máximo** de los $k$ números que se ven.
 
-## Idea
+Si por cada posición recorres los $k$, es $n\cdot k$. Con ambos $2\cdot 10^5$, no entra.
 
-Deque de **índices** con valores **estrictamente decrecientes** (el oficial usa $\le$ al sacar: iguales, gana el más a la derecha). El frente es siempre el máximo de la ventana actual.
+## La idea: una cola de dos extremos (deque) que guarda índices
 
-Al entrar $i$:
+La cola guarda posiciones de candidatos al máximo, **de mayor a menor** el valor.
 
-1. Saca de **adelante** índices $\le i-k$ (ya salieron de la ventana).
-2. Saca de **atrás** mientras $a[\mathrm{back}] \le a[i]$ (nunca van a ser máximos si $i$ está más a la derecha y es $\ge$).
-3. Empuja $i$.
-4. Si $i \ge k-1$, el máximo es $a[\mathrm{front}]$.
+Cuando llega el índice $i$:
 
-## Por qué $O(n)$
+1. Quita de **adelante** a los que ya se salieron de la ventana (`índice <= i-k`).
+2. Quita de **atrás** a los que son $\le a[i]$: nunca van a ser máximo mientras $i$ esté. $i$ es más nuevo y más grande (o igual).
+3. Metes $i$ atrás.
+4. Si ya completaste $k$ elementos ($i >= k-1$), el máximo de la ventana es `a[el de adelante]`.
 
-Cada índice entra y sale de la deque **a lo sumo una vez**. Amortizado $O(1)$ por posición.
+## Ejemplo
 
-## Por qué no `multiset`
+$a=[1,3,2,5]$, $k=3$
 
-`multiset` de $k$ elementos: $O(n\log k)$, también entra. La deque es la solución clásica y más rápida.
+- $i=0$: cola $[0]$
+- $i=1$: $3>1$, saco $0$, cola $[1]$
+- $i=2$: $2<3$, cola $[1,2]$. Ventana $0..2$, máximo $a[1]=3$
+- $i=3$: se sale $0$ (ya no estaba). $5$ echa a todos. Cola $[3]$. Máximo $5$
 
-Un sparse table de máximos da cada ventana en $O(1)$ tras $O(n\log n)$: más memoria, válido.
+Salida: $3\ 5$.
 
-## Empates
+## Si te da TLE
 
-Si hay dos máximos iguales, da igual cuál reportas: pides el **valor**. Sacar con $\le$ deja el índice más reciente; con `<` dejarías el más viejo. Ambos correctos.
+Máximo recorriendo todo en cada ventana.
 
-## Trampas
+## El código que pasa (C++)
 
-- Deque de valores, no de índices: no sabes cuándo expiró.
-- Ventanas 1-based vs 0-based: hay $n-k+1$ respuestas.
-- $k=n$: una sola ventana, el máximo global.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-deque<int> dq;
-for (int i = 0; i < n; ++i) {
-    while (!dq.empty() && dq.front() <= i - k) dq.pop_front();
-    while (!dq.empty() && a[dq.back()] <= a[i]) dq.pop_back();
-    dq.push_back(i);
-    if (i >= k - 1) out.push_back(a[dq.front()]);
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n,k; cin>>n>>k;
+    vector<ll> a(n);
+    for (int i=0;i<n;++i) cin>>a[i];
+    deque<int> dq;
+    vector<ll> out;
+    for (int i=0;i<n;++i) {
+        while (!dq.empty() && dq.front()<=i-k) dq.pop_front();
+        while (!dq.empty() && a[dq.back()]<=a[i]) dq.pop_back();
+        dq.push_back(i);
+        if (i>=k-1) out.push_back(a[dq.front()]);
+    }
+    for (int i=0;i<(int)out.size();++i) {
+        if (i) cout<<" ";
+        cout<<out[i];
+    }
+    cout<<"\n";
+    return 0;
 }
 ```

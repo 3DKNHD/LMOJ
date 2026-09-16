@@ -1,51 +1,55 @@
-# Editorial: GCD en rango
+# Editorial: La medida común
 
-## Qué pide
+## Qué hay que hacer
 
-Arreglo estático, $q$ consultas $\gcd(a_L,\dots,a_R)$ en $O(1)$ tras preprocess. $n,q\le 10^5$.
+El arreglo no cambia. Hay muchas preguntas. Cada una pide el gcd del intervalo $L..R$: el entero más grande que divide a todos esos números.
 
-## Idea
+Recorrer $L..R$ en cada pregunta es demasiado lento. Se usa una **tabla dispersa** (sparse table).
 
-Sparse table. GCD es **idempotente y asociativo**: $\gcd(x,x)=x$, solapar rangos no cambia el gcd.
+## Cómo se arma
 
-`st[k][i] = gcd` de $2^k$ elementos desde $i$. Transición:
+`st[k][i]` es el gcd de $2^k$ números seguidos que empiezan en $i$.
 
-$$
-\mathrm{st}[k][i] = \gcd(\mathrm{st}[k-1][i],\ \mathrm{st}[k-1][i+2^{k-1}])
-$$
+Un bloque de largo $2^k$ son dos bloques de largo $2^{k-1}$ pegados. Así se llena la tabla en $O(n\log n)$.
 
-Query de longitud $\ell=R-L+1$, $k=\lfloor\log_2 \ell\rfloor$:
+## Cómo se responde una pregunta
 
-$$
-\gcd(\mathrm{st}[k][L],\ \mathrm{st}[k][R-2^k+1])
-$$
+Sea $len = R-L+1$. Elige $k$ tal que $2^k$ es la mayor potencia de $2$ que no supera $len$.
 
-Los dos bloques de longitud $2^k$ cubren $[L,R]$ y **se solapan**; para GCD está bien. Para suma **no** (por eso suma usa prefijos, no ST de este estilo).
+Cubre $[L,R]$ con **dos** bloques de largo $2^k$: uno que empieza en $L$ y otro que termina en $R$. Pueden superponerse. Eso no importa: el gcd de dos trozos que se superponen sigue siendo el gcd de toda la unión.
 
-## `log`
+En GCC, $k$ se puede sacar con `__builtin_clz(len)`.
 
-El oficial: `k = 31 - __builtin_clz(r-l+1)` para `int` positivo. No uses `log2` de `double`.
+Cada pregunta queda en tiempo constante.
 
-## Complejidad
+## Si te da TLE
 
-Build $O(n\log n)$, query $O(1)$, memoria $O(n\log n)$.
+gcd recorriendo el rango cada vez.
 
-## Otras soluciones
+## El código que pasa (C++)
 
-Segment tree $O(\log n)$ por query: más lento de escribir, válido. Euclidean saltando por $\sqrt{}$: no.
-
-## Trampas
-
-- Sparse table de **suma** copiada (solape doble cuenta).
-- `gcd` de 0: aquí $a_i\ge 1$.
-- `LOG` corto (`1<<LOG <= n`).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-for (int k = 1; k < LOG; ++k)
-    for (int i = 1; i + (1 << k) - 1 <= n; ++i)
-        st[k][i] = gcd(st[k-1][i], st[k-1][i + (1 << (k-1))]);
-int k = 31 - __builtin_clz(r - l + 1);
-gcd(st[k][l], st[k][r - (1 << k) + 1])
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n,q; cin>>n>>q;
+    int LOG=1; while ((1<<LOG)<=n) ++LOG;
+    vector<vector<int>> st(LOG, vector<int>(n+1));
+    for (int i=1;i<=n;++i) cin>>st[0][i];
+    for (int k=1;k<LOG;++k)
+        for (int i=1;i+(1<<k)-1<=n;++i)
+            st[k][i]=gcd(st[k-1][i], st[k-1][i+(1<<(k-1))]);
+    while (q--) {
+        int l,r; cin>>l>>r;
+        int k = 31 - __builtin_clz(r-l+1);
+        cout << gcd(st[k][l], st[k][r-(1<<k)+1]) << "\n";
+    }
+    return 0;
+}
 ```

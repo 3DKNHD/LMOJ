@@ -1,6 +1,6 @@
 {
   "code": "estaciones",
-  "name": "Estaciones más cercanas",
+  "name": "Paradas más cercanas",
   "points": 7,
   "timeLimit": 2.0,
   "memoryLimit": 256,

@@ -1,47 +1,58 @@
-# Editorial: Suma de submatriz
+# Editorial: La cosecha del plano
 
-## Qué pide
+## Qué hay que hacer
 
-Suma del rectángulo inclusivo $[r_1,r_2]\times[c_1,c_2]$. $n,m\le 1000$, $q\le 10^5$: no sumes $O(nm)$ por query.
+Misma idea que “suma de un tramo de arreglo”, pero en 2D: suma de un rectángulo.
 
-## Idea
+## Prefijo 2D
 
-Prefijo 2D. $p_{i,j}$ = suma del rectángulo $(1,1)$–$(i,j)$:
+`p[i][j]` = suma de todo el rectángulo que va de $(1,1)$ a $(i,j)$.
 
-$$
-p_{i,j} = a_{i,j} + p_{i-1,j} + p_{i,j-1} - p_{i-1,j-1}
-$$
-
-(el último se restaba dos veces). Inclusión-exclusión de la query:
+Cómo armarlo (inclusión-exclusión de primaria):
 
 $$
-S = p_{r_2,c_2} - p_{r_1-1,c_2} - p_{r_2,c_1-1} + p_{r_1-1,c_1-1}
+p[i][j] = a[i][j] + p[i-1][j] + p[i][j-1] - p[i-1][j-1]
 $$
 
-Dibuja el rectángulo grande y quita la franja de arriba y la de la izquierda; el rectángulo esquina se restó dos veces, hay que sumarlo.
+El menos es porque la esquina de arriba a la izquierda la sumaste dos veces.
 
-## 64 bits
+Suma del rectángulo $(r_1,c_1)$–$(r_2,c_2)$:
 
-$1000^2 \cdot 10^9 = 10^{15}$. `long long` en $p$ y en la salida.
+$$
+p[r_2][c_2] - p[r_1-1][c_2] - p[r_2][c_1-1] + p[r_1-1][c_1-1]
+$$
 
-## Complejidad
+El más del final: esa esquina la restaste dos veces.
 
-Precompute $O(nm)$, cada query $O(1)$. Total $O(nm+q)$.
+Índices desde $1$. Fila/columna $0$ del `p` son ceros. `long long`.
 
-## Otras soluciones
+## Si te da WA
 
-Fenwick 2D: $O(\log n\log m)$ y sirve con updates. Aquí la matriz es estática.
+Signos dados vuelta. O `int`. O índices desde $0$ mezclados con el enunciado que pide $1$.
 
-## Trampas
+## El código que pasa (C++)
 
-- Olvidar el $+p_{r_1-1,c_1-1}$.
-- 0-indexar $p$ y leer $r_1$ 1-based.
-- `int` en $p$.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-p[i][j] = x + p[i-1][j] + p[i][j-1] - p[i-1][j-1];
-// query:
-p[r2][c2] - p[r1-1][c2] - p[r2][c1-1] + p[r1-1][c1-1]
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n,m,q; cin>>n>>m>>q;
+    vector<vector<ll>> p(n+1, vector<ll>(m+1,0));
+    for (int i=1;i<=n;++i)
+        for (int j=1;j<=m;++j) {
+            ll x; cin>>x;
+            p[i][j]=x+p[i-1][j]+p[i][j-1]-p[i-1][j-1];
+        }
+    while (q--) {
+        int r1,c1,r2,c2; cin>>r1>>c1>>r2>>c2;
+        cout << p[r2][c2]-p[r1-1][c2]-p[r2][c1-1]+p[r1-1][c1-1] << "\n";
+    }
+    return 0;
+}
 ```

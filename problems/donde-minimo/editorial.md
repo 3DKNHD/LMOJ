@@ -1,43 +1,39 @@
-# Editorial: Dónde está el mínimo
+# Editorial: El más barato
 
-## Qué pide
+## Qué hay que hacer
 
-El **índice más chico** (1-based) donde aparece $\min a$. Si el mínimo se repite, te quedas con la primera ocurrencia.
+Quieres el número más pequeño de la lista, **pero no el número**: la **posición** (empezando en $1$, no en $0$). Si el mínimo aparece varias veces, te quedas con la aparición **más a la izquierda**.
 
-## Idea
+## Paso a paso
 
-Recorres de izquierda a derecha. Guardas el mínimo actual **y** su índice. Solo actualizas cuando ves un valor **estrictamente menor**. Si es igual, no tocas el índice: así gana la aparición más a la izquierda.
+1. Lee $n$.
+2. Lee el primer número: `best` es ese valor, `pos = 1`.
+3. Para $i = 2, 3, \ldots, n$: lees $x$. **Solo si** $x$ es **estrictamente menor** que $best$, actualizas `best = x` y `pos = i`.
+4. Imprime `pos`.
 
-## Por qué “estrictamente menor”
+Si $x$ empata con $best$, **no** toques `pos`. Así te quedas con el índice más pequeño.
 
-Ejemplo: $a = [3, 1, 4, 1]$.
+## Ejemplo
 
-- $i=1$, mín $=3$, pos $=1$
-- $i=2$, $1 < 3$ → mín $=1$, pos $=2$
-- $i=3$, $4$ no mejora
-- $i=4$, $1 = 1$ → **no** cambias pos
+Lista (posiciones $1..6$): $4,\ 2,\ 5,\ 2,\ 9,\ 2$.
 
-Respuesta $2$, no $4$. Si usas `<=` en vez de `<`, te quedarías con la **última** aparición: WA.
+- pos $1$: best $4$, pos $1$
+- pos $2$: $2<4$ → best $2$, pos $2$
+- pos $3$: $5$ no
+- pos $4$: $2$ empata, no cambio → sigo en pos $2$
+- pos $5$, $6$: no
 
-## 1-indexado
+Respuesta: $2$. No $4$ ni $6$.
 
-El enunciado cuenta posiciones desde $1$. Si tu `for` va de $0$ a $n-1$, imprime `i+1`. Olvidarlo es el WA más común de este problema.
+## Si te da WA
 
-## Por qué no hace falta buscar dos veces
+- Imprimiste el valor en vez del índice.
+- Índices desde $0$ (C++) y el juez espera desde $1$.
+- Usaste `<=` y te quedaste con la **última** aparición.
 
-Podrías: (1) hallar el mínimo, (2) recorrer de nuevo hasta encontrarlo. Es correcto y $O(n)$, pero un solo pase ya lleva el índice.
+## El código que pasa (C++)
 
-## Complejidad
-
-$O(n)$ tiempo, $O(1)$ extra.
-
-## Trampas
-
-- Usar `<=` y devolver la última posición.
-- Imprimir índice 0-based.
-- Inicializar el mínimo en $0$ (mismo error que en “El mayor”, ahora con negativos).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -60,5 +56,6 @@ int main() {
         }
     }
     cout << pos << "\n";
+    return 0;
 }
 ```

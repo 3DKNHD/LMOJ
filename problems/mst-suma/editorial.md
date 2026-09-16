@@ -1,45 +1,55 @@
-# Editorial: Red mínima
+# Editorial: Cablear el campus
 
-## Qué pide
+## Qué hay que hacer
 
-MST: subconjunto de aristas de costo mínimo que conecta los $n$ nodos. Si el grafo no es conexo, `IMPOSIBLE`. Suma en 64 bits.
+Quieres conectar $n$ edificios pagando lo menos posible. Eso es un **árbol recubridor mínimo** (MST): $n-1$ cables, sin ciclos, suma mínima. Si no se puede, `IMPOSIBLE`.
 
-## Idea
+## Kruskal, en humano
 
-Kruskal: ordena aristas por $w$ creciente. DSU: añade una arista si une componentes distintas. Al final necesitas exactamente $n-1$ aristas usadas.
+1. Ordena **todos** los cables de más barato a más caro.
+2. Recórrelos en ese orden. Si los dos edificios **aún no** están en la misma red (DSU, como en “Cables del lab”), usa el cable, sumá el costo.
+3. Si usaste exactamente $n-1$ cables, imprime el costo. Si no, el grafo no era conexo.
 
-El oficial guarda `array<ll,3>` como `(w, u, v)` para que `sort` ordene por peso.
+¿Por qué el más barato primero? Cualquier ciclo futuro, el cable más caro del ciclo sobra. Kruskal nunca se arrepiente.
 
-## Por qué es óptimo
+Suma en `long long`.
 
-Cualquier arista de un corte que no sea de peso mínimo se puede intercambiar (propiedad de corte / greedy matroid). Kruskal recorre en orden y nunca rechaza una arista que haría falta para un MST.
+## Si te da WA
 
-## Prim
+No comprobaste `used == n-1`. Uniste cables que formaban ciclo y sumaste de más.
 
-Igual de válido: crece un árbol desde un nodo con heap. Si el grafo no es conexo, algunos nodos quedan a distancia INF. Kruskal detecta conexidad con `used == n-1`.
+## El código que pasa (C++)
 
-## Un nodo
-
-$n=1$, $m=0$: $0$ aristas, costo $0$. `used==0==n-1`.
-
-## Complejidad
-
-$O(m\log m)$ sort + $O(m\alpha(n))$ DSU.
-
-## Trampas
-
-- Suma en `int` ($m\cdot 10^9$).
-- Aceptar grafos con `used < n-1`.
-- Kruskal sin DSU (ciclos a mano: TLE).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-sort(e.begin(), e.end());  // (w, u, v)
-for (auto &t : e)
-    if (d.unite((int)t[1], (int)t[2])) {
-        cost += t[0];
-        ++used;
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+struct DSU {
+    vector<int> p, r;
+    DSU(int n): p(n+1), r(n+1,0) { iota(p.begin(), p.end(), 0); }
+    int find(int x) { return p[x]==x ? x : p[x]=find(p[x]); }
+    bool unite(int a, int b) {
+        a=find(a); b=find(b); if (a==b) return false;
+        if (r[a]<r[b]) swap(a,b);
+        p[b]=a; if (r[a]==r[b]) ++r[a];
+        return true;
     }
-if (used != n - 1) cout << "IMPOSIBLE\n";
+};
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n, m; cin >> n >> m;
+    vector<array<ll,3>> e(m);
+    for (int i=0;i<m;++i) cin >> e[i][1] >> e[i][2] >> e[i][0];
+    sort(e.begin(), e.end());
+    DSU d(n);
+    ll cost=0; int used=0;
+    for (auto &t: e) if (d.unite((int)t[1], (int)t[2])) { cost += t[0]; ++used; }
+    if (used != n-1) cout << "IMPOSIBLE\n";
+    else cout << cost << "\n";
+    return 0;
+}
 ```

@@ -1,10 +1,13 @@
 {
   "code": "prefijo-par",
-  "name": "Prefijos pares",
+  "name": "La balanza",
   "points": 3,
   "timeLimit": 1.0,
   "memoryLimit": 256,
-  "tags": ["prefijos", "paridad"],
+  "tags": [
+    "prefijos",
+    "paridad"
+  ],
   "partial": false,
   "author": "LMOJ"
 }

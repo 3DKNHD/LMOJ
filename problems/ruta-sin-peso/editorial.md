@@ -1,46 +1,37 @@
-# Editorial: Ruta sin peso
+# Editorial: Hasta la sala n
 
-## Qué pide
+## Qué hay que hacer
 
-Grafo no dirigido **sin pesos**. Distancia (número de aristas) de $1$ a $n$, o $-1$ si no hay camino. Si $n=1$, la respuesta es $0$. $n\le 10^5$, $m\le 2\cdot 10^5$. Bucles y aristas repetidas permitidos.
+Pasillos todos de largo $1$. De la sala $1$ a la $n$, ¿cuántos pasillos como mínimo? Si no se puede, $-1$. Si $n=1$, la respuesta es $0$.
 
-## Idea
+## Por qué BFS (cola) y no “el camino que se me ocurre”
 
-BFS desde $1$. En un grafo no ponderado, la primera vez que alcanzas un nodo es por un camino **mínimo** en número de aristas.
+Cuando todos los pasillos valen $1$, la **primera** vez que llegas a una sala es por un camino más corto. Siempre. Por eso usas una cola: primero los que están a distancia $0$, después $1$, después $2$, …
 
-`dist[v] = dist[u] + 1` al relajar la arista $u\to v$ con `dist[v]` aún vacío (`-1`).
+## Paso a paso
 
-## Por qué no Dijkstra
+1. Armá la lista de vecinos de cada sala (el grafo va en los dos sentidos).
+2. `dist[i] = -1` para todos (“nunca fui”). `dist[1] = 0`. Cola con $1$.
+3. Mientras la cola no esté vacía: saca $u$. Por cada vecino $v$ que siga en $-1$: `dist[v] = dist[u]+1`, encola $v$.
+4. Imprime `dist[n]` (si nunca lo tocaste, sigue `-1`).
 
-Dijkstra también da el más corto, pero con pesos positivos y un heap es $O(m\log n)$. Aquí todas las aristas valen $1$: BFS es $O(n+m)$ y más simple. Usar Dijkstra no está mal, es innecesario.
+## Ejemplo
 
-DFS **no** da distancias mínimas (puede encontrar un camino largo primero).
+$1-2-4$, y $1-3$. $n=4$.
 
-## $n = 1$
+- dist $1 = 0$
+- de $1$ salís a $2$ y $3$ → dist $1$
+- de $2$ a $4$ → dist $2$
 
-`dist[1] = 0` al empezar. No necesitas aristas. Imprimes $0$. Si olvidas inicializar y dejas `-1`, WA.
+Respuesta: $2$.
 
-## Bucles y múltiples aristas
+## Si te da WA / TLE
 
-Un bucle $u\to u$ no mejora distancia. Aristas dobles: la primera vez que visitas $v$ lo marcas; las siguientes `dist[v] != -1` y se ignoran. Correcto.
+DFS (el primer camino que encuentras no es el más corto). O Dijkstra con pesos $1$: funciona pero es más código y más lento. O grafo dirigido de un solo lado.
 
-## Complejidad
+## El código que pasa (C++)
 
-$O(n+m)$. Memoria $O(n+m)$ para la lista de adyacencia.
-
-## Otras soluciones
-
-- 0-1 BFS / deque: equivalente a BFS aquí.
-- Dijkstra: AC más lento de escribir.
-
-## Trampas
-
-- Grafo dirigido (olvidar `g[v].push_back(u)`).
-- DFS.
-- No poner `dist[1]=0`.
-- Índices $0$ vs $1$.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -73,5 +64,6 @@ int main() {
         }
     }
     cout << dist[n] << "\n";
+    return 0;
 }
 ```

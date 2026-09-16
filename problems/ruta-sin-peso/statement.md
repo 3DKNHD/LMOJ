@@ -1,13 +1,15 @@
-# Ruta sin peso
+# Hasta la sala $n$
 
-Grafo no dirigido **sin pesos**. ¿Cuál es la distancia (número de aristas) de $1$ a $n$? Si no hay camino, imprime $-1$.
+El edificio de la olimpiada es un grafo: $n$ salas y $m$ pasillos. Cada pasillo une dos salas y se recorre en los dos sentidos. Recorrer un pasillo cuesta **un paso**, todos iguales: no hay distancias en metros, solo «cuántos pasillos». Puede haber bucles y pasillos repetidos; no te acortan el camino de forma mágica.
+
+Empiezas en la sala $1$ (el hall) y quieres la sala $n$ (el auditorio). La respuesta es el mínimo número de pasillos de algún recorrido. Si $n = 1$, ya estás: $0$. Si no existe camino, imprime $-1$.
 
 ## Entrada
 
 La primera línea contiene $n$ y $m$ ($1 \le n \le 10^5$, $0 \le m \le 2 \cdot 10^5$).
 
-Siguen $m$ líneas con $u$ $v$ ($1 \le u,v \le n$). El grafo puede tener bucles y aristas repetidas.
+Siguen $m$ líneas con $u$ $v$ ($1 \le u,v \le n$).
 
 ## Salida
 
-Un único entero: $\mathrm{dist}(1,n)$ o $-1$. Si $n=1$ la respuesta es $0$.
+Un único entero: la distancia en pasillos, o $-1$.

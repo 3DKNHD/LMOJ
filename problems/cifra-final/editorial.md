@@ -1,59 +1,45 @@
-# Editorial: Cifra final
+# Editorial: El candado
 
-## Qué pide
+## Qué hay que hacer
 
-Para cada $n$, su **última cifra decimal** (un dígito $0$–$9$). Si $n$ es negativo, usas el valor absoluto: $-17$ termina en $7$.
+La última cifra de $17$ es $7$. La de $100$ es $0$. La de $-17$ **también** es $7$: el candado no entiende el signo, mira el valor absoluto.
 
-## Idea
+Eso es $|n|$ módulo $10$. “Módulo $10$” = el resto de dividir por $10$ = el último dígito.
 
-La última cifra de un no negativo es $n \bmod 10$. Para negativos, primero quitas el signo y después el módulo.
+## Paso a paso
 
-$$
-\text{respuesta} = |n| \bmod 10
-$$
+1. Lee $T$.
+2. Por cada $n$:
+   - Si $n$ es negativo, pon $n = -n$ (ahora es positivo o cero).
+   - Imprime $n \% 10$.
 
-## Por qué `n % 10` crudo falla en C++
+## Por qué `n % 10` crudo te rompe en C++
 
-El operador `%` en C++ sigue el signo del dividendo:
+En C++ el `%` **copia el signo** del número de la izquierda.
 
-| $n$ | $n \% 10$ en C++ | lo que queremos |
-|-----|------------------|-----------------|
+| $n$ | $n % 10$ en C++ | lo que el juez quiere |
+|-----|-----------------|------------------------|
 | $17$ | $7$ | $7$ |
 | $-17$ | $-7$ | $7$ |
 | $-10$ | $0$ | $0$ |
 
-Si imprimes `-7`, el juez espera `7`: WA. Por eso el oficial hace:
+Si imprimes `-7`, WA. Por eso **primero** sacas el signo.
 
-```cpp
-if (n < 0) n = -n;
-cout << n % 10;
-```
+En Python `(-17) % 10` da $3$ (regla distinta). Tampoco sirve crudo. Haz $abs(n) % 10$.
 
-**Python** (`n % 10`) ya da un resto $0..9$ incluso para negativos (`(-17) % 10 == 3` — **espera**). Eso **no** es la última cifra de $-17$. En Python hay que hacer `abs(n) % 10` igual que en C++.
+## Ejemplo
 
-## Overflow al negar
+$-17 \to 17 \to 7$.  
+$0 \to 0$.  
+$100 \to 0$.
 
-`n = -n` explota si $n$ es exactamente $-2^{63}$ (`LONG_MIN`). Aquí $n \ge -10^{18}$, y $-10^{18} > -2^{63}$, así que es seguro. Si copias este truco a otro problema con todo el rango de `long long`, usa `unsigned` o `std::llabs` con cuidado.
+## Si te da WA
 
-## 64 bits
+No sacaste el signo. O imprimiste el número entero en vez de un dígito.
 
-$|n|$ llega a $10^{18}$. Lee `long long`. El dígito de salida cabe en `int`.
+## El código que pasa (C++)
 
-## Complejidad
-
-$O(T)$ con $T \le 10^5$. I/O rápido.
-
-## Otras soluciones
-
-Pasar a string y tomar el último carácter que sea dígito (saltando un `-` inicial). Correcto, más lento de tipear. La aritmética es la idea.
-
-## Trampas
-
-- Imprimir el `%` negativo de C++.
-- En Python, usar `n % 10` sin `abs` (para $-17$ sale $3$, no $7$).
-- Leer `int` y perder los $10^{18}$.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -70,5 +56,6 @@ int main() {
         if (n < 0) n = -n;
         cout << n % 10 << "\n";
     }
+    return 0;
 }
 ```

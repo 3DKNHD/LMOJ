@@ -1,52 +1,62 @@
-# Editorial: Siguiente mayor
+# Editorial: El próximo récord
 
-## Qué pide
+## Qué hay que hacer
 
-Para cada $i$, el **valor** $a_j$ del mínimo $j>i$ con $a_j > a_i$ (estrictamente). Si no hay, $-1$. No pides el índice.
+Para cada posición, el primer número **a la derecha** que sea **estrictamente más grande**. Si no hay, `-1`. Quieres el **valor**, no el índice.
 
-## Idea
+## Recorre de derecha a izquierda con una pila de índices
 
-Stack monótono **de índices**, de derecha a izquierda. El stack guarda candidatos en valores **estrictamente crecientes** hacia el tope (el oficial saca mientras $a[\mathrm{top}] \le a[i]$).
+La pila tiene candidatos, con valores **crecientes** hacia arriba (el tope es el más cercano a la derecha que todavía sirve).
 
-Al estar en $i$:
+En $i$, de derecha a izquierda:
 
-1. Tira del tope todo lo $\le a[i]$: nunca serán el siguiente mayor de $i$ (son $\le$) ni de nadie a la izquierda de $i$ respecto a un candidato peor.
-2. Si el stack no está vacío, el tope es el primer mayor a la derecha.
-3. Empuja $i$.
+1. Mientras el tope sea $\le a[i]$, sacalo: no es estrictamente mayor.
+2. Si la pila no está vacía, `ans[i] = a[tope]`.
+3. Mete $i$ en la pila.
 
-Cada índice entra/sale una vez: $O(n)$.
+¿Por qué funciona? Todo lo que sacaste era $\le a[i]$, así que para la izquierda de $i$, $i$ es un candidato mejor (más cerca y más grande o igual).
 
-## Por qué de derecha a izquierda
+## Ejemplo
 
-Cuando procesas $i$, el stack ya contiene solo posiciones $>i$, en el orden en que pueden ser “próximo mayor”.
+$2, 1, 3$
 
-De izquierda a derecha también se puede (stack de no resueltos); es el dual. El oficial va hacia atrás y guarda **valores** en `ans[i]`.
+- $i=2$ ($3$): pila vacía → $-1$, pila $[2]$
+- $i=1$ ($1$): tope $3>1$ → ans $3$, pila $[2,1]$
+- $i=0$ ($2$): saco $1$ ($1\le 2$), tope $3>2$ → ans $3$
 
-## Estrictamente mayor
+Salida: $3\ 3\ -1$.
 
-`<=` al popear: iguales no sirven. Si el enunciado pidiera $\ge$, cambiarías a `<`.
+## Si te da WA
 
-## Complejidad
+Pusiste $\ge$ y no encuentras nada estrictamente mayor. O imprimiste índices.
 
-$O(n)$ tiempo y memoria.
+## El código que pasa (C++)
 
-## Otras soluciones
-
-Sparse table / segment tree de “primer índice con valor $> a_i$ a la derecha”: más pesado. $O(n^2)$: TLE.
-
-## Trampas
-
-- Imprimir el **índice** en vez del valor.
-- Usar $\ge$ y aceptar iguales.
-- Olvidar $-1$ cuando el stack queda vacío (el máximo global a la derecha no tiene next).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
-vector<int> st;
-for (int i = n - 1; i >= 0; --i) {
-    while (!st.empty() && a[st.back()] <= a[i]) st.pop_back();
-    if (!st.empty()) ans[i] = a[st.back()];
-    st.push_back(i);
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n; cin>>n;
+    vector<ll> a(n);
+    for (int i=0;i<n;++i) cin>>a[i];
+    vector<int> ans(n, -1);
+    vector<int> st;
+    for (int i=n-1;i>=0;--i) {
+        while (!st.empty() && a[st.back()]<=a[i]) st.pop_back();
+        if (!st.empty()) ans[i]=a[st.back()];
+        st.push_back(i);
+    }
+    for (int i=0;i<n;++i) {
+        if (i) cout<<" ";
+        cout<<ans[i];
+    }
+    cout<<"\n";
+    return 0;
 }
 ```

@@ -1,6 +1,6 @@
 {
   "code": "siguiente-mayor",
-  "name": "Siguiente mayor",
+  "name": "El próximo récord",
   "points": 6,
   "timeLimit": 1.5,
   "memoryLimit": 256,

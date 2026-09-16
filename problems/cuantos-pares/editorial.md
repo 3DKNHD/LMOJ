@@ -1,50 +1,45 @@
-# Editorial: Cuántos pares
+# Editorial: Chapas pares
 
-## Qué pide
+## Qué hay que hacer
 
-Cuántos $a_i$ son **pares**. El $0$ es par. Los negativos pares ($-2$, $-4$, …) también.
+Un número es **par** si al dividirlo por $2$ el resto es $0$. Ejemplos: $4$, $0$, $-2$. Impares: $3$, $-1$.
 
-## Idea
+Te dan $n$ números. Cuenta cuántos son pares. Imprime ese contador.
 
-Un entero es par sii es divisible por $2$, es decir $a \equiv 0 \pmod{2}$. Cuentas cuántos cumplen eso.
+## Paso a paso
 
-## Cómo chequear paridad (y los negativos)
+1. Lee $n$.
+2. `ans = 0`.
+3. Por cada número $x$: si $x$ es par, $ans++$.
+4. Imprime `ans`.
 
-En matemáticas, $-4 = 2 \cdot (-2)$, así que es par.
+## Cómo saber si es par en C++
 
-**C++:** `x % 2 == 0` funciona para negativos en la práctica del juez (`-4 % 2 == 0`, `-3 % 2 == -1`). No uses `x % 2 == 1` para impares: en C++ un impar negativo da `-1`, no `1`. Si algún día quieres impares, usa `x % 2 != 0`.
+```cpp
+if (x % 2 == 0)
+```
 
-**Python:** el módulo es no negativo, así que `x % 2 == 0` también detecta pares negativos.
+`%` es el resto. El $0$ es par: $0\% 2 = 0$. Un negativo par ($-4$) también: en C++ $(-4)\% 2 = 0$.
 
-Equivalente y a prueba de signo:
+## Ejemplo
 
-$$
-|x| \bmod 2 = 0
-$$
+Lista: $5,\ 0,\ -4,\ 7,\ 8$.
 
-En C++: `llabs(x) % 2 == 0` (ojo: `abs` de `int` no sirve si $x$ es `long long`).
+- $5$ impar
+- $0$ par → $1$
+- $-4$ par → $2$
+- $7$ impar
+- $8$ par → $3$
 
-**No uses** `x & 1` sin pensar: en negativos depende de la representación. Para este problema, `% 2 == 0` es lo limpio.
+Respuesta: $3$.
 
-## El cero
+## Si te da WA
 
-$0 = 2 \cdot 0$, es par. Si escribes `if (x != 0 && x % 2 == 0)` estás mal.
+Trataste el $0$ como impar. O usaste $x % 2 == 1$ para “impar”: en C++ los negativos pueden dar resto $-1$, no $1$. Para pares, comparado con $0$ estás bien.
 
-## Complejidad
+## El código que pasa (C++)
 
-$O(n)$. El contador cabe en `int`.
-
-## Otras soluciones
-
-Convertir a string y mirar el último carácter: funciona, es más lento de escribir y falla si olvidas el signo (`"-4"` termina en `'4'`). No vale la pena.
-
-## Trampas
-
-- Tratar negativos como impares “porque el `%` da raro”.
-- Excluir el $0$.
-- Usar `x % 2 == 1` copiado de un código de impares.
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -62,5 +57,6 @@ int main() {
         if (x % 2 == 0) ++ans;
     }
     cout << ans << "\n";
+    return 0;
 }
 ```

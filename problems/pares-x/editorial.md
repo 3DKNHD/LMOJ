@@ -1,66 +1,46 @@
-# Editorial: Pares que suman X
+# Editorial: Dos fichas
 
-## Qué pide
+## Qué hay que hacer
 
-Número de pares de **índices** $i < j$ con $a_i + a_j = X$. Puede haber repetidos. $n \le 2\cdot 10^5$: $O(n^2)$ no entra. La respuesta cabe en 64 bits.
+Tienes $n$ fichas (pueden repetirse). Quieres cuántas **parejas de personas distintas** suman exactamente $X$. Persona $i$ con persona $j$, $i<j$.
 
-## Idea
+Si hay tres $5$ y $X=10$, las parejas $5+5$ son $\binom{3}{2}=3$, no $1$.
 
-Frecuencias. Si $v$ aparece $c_v$ veces, un par $\{v, X-v\}$ aporta:
+Un doble `for` ($i$ contra todos los $j$) es $n^2$. Con $n=2\cdot 10^5$ eso es $40$ mil millones de operaciones. No entra. No alcanza el tiempo.
 
-- Si $v \ne X-v$: $c_v \cdot c_{X-v}$ pares, pero eso cuenta cada par **una vez por extremo**. Para no duplicar, iteras solo $v \le X-v$.
-- Si $v = X-v$ (o sea $X = 2v$): son pares dentro del mismo valor: $\binom{c_v}{2} = c_v(c_v-1)/2$.
+## La idea
 
-El oficial mete todo en un `map`, recorre cada $v$, y si `need = X-v` cumple `need >= v`, suma lo anterior.
+Cuenta cuántas veces aparece cada valor (un `map`).
 
-## Por qué índices, no valores
+Para cada valor $v$ que aparece $c$ veces, el compañero que necesita es $need = X-v$.
 
-$(i,j)$ distintos. Dos copias del mismo número son dos índices: $a = [5,5]$, $X=10$ da $1$ par, no $0$. Por eso $\binom{c}{2}$, no “si existe el valor”.
+- Si $need = v$: estás armando parejas **dentro** del mismo número. Fórmula: $c\cdot(c-1)/2$. (Elegir $2$ de $c$.)
+- Si $need > v$: busca cuántos $need$ hay, digamos $d$, y sumá $c\cdot d$. El $>$ evita contar dos veces el mismo par $(v, need)$ y $(need, v)$.
+- Si $need < v$: no hagas nada, ya lo viste cuando procesaste el más pequeño.
+
+## Ejemplo
+
+Lista $1,5,5,3$, $X=6$.
+
+- Un $1$ y… necesita $5$. Hay dos $5$ → $2$ parejas.
+- Dos $5$: $5+5=10\neq 6$, no suman entre ellos.
+- $3$ necesita $3$: hay uno solo → $0$ parejas de $3+3$.
+
+Total $2$. Las parejas son (el $1$ con cada $5$).
 
 ## 64 bits
 
-$n=2\cdot 10^5$, peor caso todo igual y $X=2a_1$: $\binom{n}{2} \approx 2\cdot 10^{10}$. `long long`. Multiplica con `long long`: `c * (c-1) / 2`.
+$c$ puede ser $2\cdot 10^5$. $c\cdot(c-1)/2$ no entra en `int`. `long long`.
 
-## Complejidad
+## Si te da TLE / WA
 
-`std::map` da $O(n \log n)$ inserciones y $O(u \log u)$ consultas, $u \le n$. Entra.
+- $O(n^2)$.
+- Contar $(v,need)$ y $(need,v)$.
+- Tratar repetidos como si fueran uno solo.
 
-`unordered_map` es $O(n)$ esperado; hay que hashear `long long` (valores negativos). Two pointers tras ordenar también es $O(n \log n)$ y no usa mapa: dos índices en el arreglo **ordenado de valores**, con cuidado de no contar índices originales mal — más limpio contar sobre frecuencias o sobre el arreglo ordenado de pares `(valor, índice)`.
+## El código que pasa (C++)
 
-Two pointers sobre el arreglo ordenado de **valores** (cada aparición aparte):
-
-```text
-i = 0, j = n-1
-mientras i < j:
-  si a[i]+a[j] == X: hay que contar el bloque de iguales
-  ...
-```
-
-Es fácil equivocarse con repetidos. El mapa es más difícil de romper.
-
-## Otras soluciones
-
-- Hashmap valor → cantidad, un pase: al ver $a_j$ sumas `freq[X - a_j]` (los de la **izquierda**) y luego incrementas `freq[a_j]`. Cuenta $i<j$ automáticamente, duplicados incluidos. $O(n)$ esperado. Muy limpio.
-
-```cpp
-long long ans = 0;
-map<long long, long long> f;
-for (long long x : a) {
-    ans += f[X - x];
-    f[x]++;
-}
-```
-
-Equivale al oficial y evita el `need < v`.
-
-## Trampas
-
-- Contar cada par dos veces ($v$ y $X-v$).
-- Usar `int` en el producto.
-- `need = X - v` en `int` ( $X-v$ sale del 32-bit).
-- Tratar $v$ y $X-v$ iguales como $c_v \cdot c_v$ (cuenta pares $(i,i)$).
-
-## Código de referencia (C++)
+Código completo en C++. Es el mismo que usa el juez. Puedes copiarlo.
 
 ```cpp
 #include <bits/stdc++.h>
@@ -89,5 +69,6 @@ int main() {
         }
     }
     cout << ans << "\n";
+    return 0;
 }
 ```
